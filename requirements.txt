@@ -1,0 +1,6 @@
+aiohttp>=2.0.6
+
+# for database
+# asyncpg
+
+git+https://github.com/Rapptz/discord.py@rewrite
