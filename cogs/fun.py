@@ -1,6 +1,7 @@
+import random
+
 import discord
 from discord.ext.commands import command
-import random
 
 
 class Fun:

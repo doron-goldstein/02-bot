@@ -1,12 +1,14 @@
-import os
 import logging
-# import ssl
+import os
 
-# import asyncpg
 import discord
 from discord.ext import commands
 
-startup_extensions = ["fun", "moderation"]
+# import ssl
+# import asyncpg
+
+
+startup_extensions = ["fun", "moderation", "admin"]
 extensions = ["cogs." + ext for ext in startup_extensions]
 try:
     with open("token") as f:
