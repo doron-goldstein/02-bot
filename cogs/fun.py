@@ -37,12 +37,12 @@ class Fun:
         await ctx.send(f"Ship chance for `{user1.name}` and `{user2.name}`: {chance}%!\n{comment}")
 
     @command()
-    async def sync(self, ctx, thing1=None, thing2=None):
+    async def sync(self, ctx, thing1, thing2=None):
         """What is the sync % between these two??"""
 
         if thing2 is None:
             thing2 = thing1
-            thing1 = ctx.author
+            thing1 = ctx.author.name
 
         chance = random.randint(0, 100)
         await ctx.send(f"**{thing1}** and **{thing2}** have a sync rate of {chance}%!")
