@@ -30,6 +30,9 @@ class Moderation:
         await self.log_chan[member.guild.id].send(embed=embed)
 
     async def on_command_error(self, ctx, err):
+        if hasattr(ctx.command, 'on_error'):
+            return
+
         if isinstance(err, commands.BadArgument):
             await ctx.send(f"Incorrect usage. Try `{ctx.prefix}help {ctx.command}` for more info.")
         else:

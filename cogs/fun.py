@@ -1,6 +1,7 @@
 import random
 
 import discord
+from discord.ext import commands
 from discord.ext.commands import command
 
 
@@ -36,6 +37,11 @@ class Fun:
         chance = random.randint(0, 100)
         comment = self.ship_comments[round(chance, -1)]
         await ctx.send(f"Ship chance for `{user1.name}` and `{user2.name}`: {chance}%!\n{comment}")
+
+    @ship.error
+    async def rand_error(self, ctx, err):
+        if isinstance(err, commands.BadArgument):
+            return await ctx.send("I can't recognize who that is! Did you misspell their name, Darling?")
 
     @command()
     async def sync(self, ctx, thing1, thing2=None):
