@@ -28,12 +28,9 @@ class FranXX:
         day = "Saturday"
         hour = "23:30"
         jp_time = datetime.now(pytz.timezone("Japan"))
-        print(jp_time)
         air_date = await self.get_next_weekday(jp_time.strftime('%Y-%m-%d'), day)
-        print(air_date)
         time_now = jp_time.replace(tzinfo=None)
         show_airs = datetime.strptime(f'{air_date} - {hour.strip()}', '%Y-%m-%d - %H:%M')
-        print(show_airs)
         remaining = show_airs - time_now
         if remaining.days < 0:
             return f'{6} Days {remaining.seconds // 3600} Hours and {(remaining.seconds // 60)%60} Minutes.'
