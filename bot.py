@@ -8,7 +8,7 @@ from discord.ext import commands
 # import asyncpg
 
 
-startup_extensions = ["fun", "moderation", "admin"]
+startup_extensions = ["fun", "moderation", "admin", "franxx"]
 extensions = ["cogs." + ext for ext in startup_extensions]
 try:
     with open("token") as f:
