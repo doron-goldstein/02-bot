@@ -32,7 +32,7 @@ class Fun:
             user2 = user1
             user1 = ctx.author
 
-        random.seed(str(user1.id) + str(user2.id))
+        random.seed(user1.id + user2.id)
         chance = random.randint(0, 100)
         comment = self.ship_comments[round(chance, -1)]
         await ctx.send(f"Ship chance for `{user1.name}` and `{user2.name}`: {chance}%!\n{comment}")
@@ -45,7 +45,7 @@ class Fun:
             thing2 = thing1
             thing1 = ctx.author.name
 
-        random.seed(str(len(thing1)) + str(len(thing2)))
+        random.seed(len(thing1) + len(thing2))
         chance = random.randint(0, 100)
         await ctx.send(f"**{thing1}** and **{thing2}** have a sync rate of {chance}%!")
 
