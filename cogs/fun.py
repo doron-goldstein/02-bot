@@ -37,18 +37,15 @@ class Fun:
         await ctx.send(f"Ship chance for `{user1.name}` and `{user2.name}`: {chance}%!\n{comment}")
 
     @command()
-    async def sync(self, ctx, thing1: discord.Member = None, thing2: discord.Member = None):
+    async def sync(self, ctx, thing1=None, thing2=None):
         """What is the sync % between these two??"""
 
-        if thing1 is None:
-            thing1 = ctx.author
-            thing2 = random.choice(ctx.guild.members)  # can disallow bots but it might be funny this way
-        elif thing2 is None:
+        if thing2 is None:
             thing2 = thing1
             thing1 = ctx.author
 
-        chance = random.randint(0, 10) * 10
-        await ctx.send(f"**{thing1.name}** and **{thing2.name}** have a sync rate of {chance}%!")
+        chance = random.randint(0, 100)
+        await ctx.send(f"**{thing1}** and **{thing2}** have a sync rate of {chance}%!")
 
     @command()
     async def pat(self, ctx, user: discord.Member = None):
