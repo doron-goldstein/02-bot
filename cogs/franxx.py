@@ -39,9 +39,9 @@ class FranXX:
                     f'{remaining.seconds // 3600} Hours '
                     f'and {(remaining.seconds // 60)%60} Minutes.')
 
-    @commands.command(aliases=["episode", "nextepisode", "airtime"], hidden=True)
+    @commands.command(aliases=["episode", "nextepisode", "airtime"])
     async def next(self, ctx):
-        """Countdown to next episode of an airing anime."""
+        """Countdown to next episode of the anime."""
         remaining = await self.get_remaining_time()
         embed = discord.Embed(title="Darling in the FranXX", color=0x0066CC)
         embed.add_field(name="Next Episode", value=remaining)
