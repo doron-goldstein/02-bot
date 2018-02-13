@@ -7,7 +7,7 @@ class Moderation:
     def __init__(self, bot):
         self.bot = bot
         self.lockdown_msg = {}
-        self.log_chan = {391483719803994113: self.bot.get_channel(410189085714546698)}
+        self.log_chan = {391483719803994113: self.bot.get_channel(413010299776532490)}
         self.mute_role = discord.utils.get(self.bot.get_guild(391483719803994113).roles, id=392897098875404289)
         self.embed_colors = {
             "kick": 0xffa500,
