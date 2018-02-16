@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import ssl
@@ -27,7 +26,7 @@ logging.basicConfig(level=logging.INFO)
 class ZeroTwo(commands.Bot):
     def __init__(self):
         game = discord.Game(name="with my Darling~ <3")
-        super().__init__(command_prefix=commands.when_mentioned_or("d>"),
+        super().__init__(command_prefix=commands.when_mentioned_or(">", "02"),
                          description="Zero Two Bot for the Darling in the FranXX server",
                          game=game)
         self.pool = None
