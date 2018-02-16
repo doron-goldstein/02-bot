@@ -111,14 +111,10 @@ class Moderation:
     @command(hidden=True, aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
         await ctx.message.delete()
-        print(self.bot.muted_roles)
         r_id = self.bot.muted_roles[ctx.guild.id]
-        print(1)
         if r_id:
-            print(2)
             role = discord.utils.get(ctx.guild.roles, id=r_id)
             if role:
-                print(3)
                 await target.remove_roles(role)
         await self.log_action("unmute", member=target, reason=reason, mod=ctx.author)
 
