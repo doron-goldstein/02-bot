@@ -16,17 +16,23 @@ try:
         config = yaml.load(f)
         token = config["token"]
         db = config["db"]
+        dev = True
 except:  # noqa
     token = os.environ.get("TOKEN")
     db = os.environ.get("DATABASE_URL")
+    dev = False
 
 logging.basicConfig(level=logging.INFO)
+
+
+async def get_prefix(bot, msg):
+    return commands.when_mentioned_or("d>")(bot, msg) if dev else commands.when_mentioned_or(">", "02 ")(bot, msg)
 
 
 class ZeroTwo(commands.Bot):
     def __init__(self):
         game = discord.Game(name="with my Darling~ <3")
-        super().__init__(command_prefix=commands.when_mentioned_or(">", "02"),
+        super().__init__(command_prefix=get_prefix,
                          description="Zero Two Bot for the Darling in the FranXX server",
                          game=game)
         self.pool = None
