@@ -13,6 +13,7 @@ class Logger:
     async def log_message(self, action, message, new_msg=None):
         embed = discord.Embed(title="Message " + action, description=f"", color=self.colors[action])
         embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+        embed.add_field(name="Channel", value=message.channel.mention)
         embed.add_field(name="Content", value=message.content, inline=False)
         if action == "edit":
             embed.add_field(name="Edited Content", value=new_msg.content, inline=False)
