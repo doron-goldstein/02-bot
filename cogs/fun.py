@@ -95,6 +95,12 @@ class Fun:
             return await ctx.send(f"{ctx.author.name} licked.... No one!")
         await ctx.send(f"{ctx.author.name} Licked {user.name}!")
 
+    @command()
+    async def saturday(self, ctx):
+        """Saturday?"""
+
+        await ctx.send("https://www.youtube.com/watch?v=hKqwULUwHFc")
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))
