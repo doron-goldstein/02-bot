@@ -2,3 +2,4 @@
 .flake8
 token
 __pycache__/
+config.yaml

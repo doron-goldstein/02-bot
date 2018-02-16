@@ -1,37 +1,51 @@
+import json
 import logging
 import os
+import ssl
 
+import asyncpg
 import discord
 from discord.ext import commands
-
-# import ssl
-# import asyncpg
-
+from ruamel.yaml import YAML
 
 startup_extensions = ["fun", "moderation", "admin", "franxx"]
 extensions = ["cogs." + ext for ext in startup_extensions]
+
+yaml = YAML()
 try:
-    with open("token") as f:
-        token = f.readline()
+    with open("config.yaml") as f:
+        config = yaml.load(f)
+        token = config["token"]
+        db = config["db"]
 except:  # noqa
     token = os.environ.get("TOKEN")
+    db = os.environ.get("DATABASE_URL")
+
 logging.basicConfig(level=logging.INFO)
 
 
 class ZeroTwo(commands.Bot):
     def __init__(self):
-        game = discord.Game(name="with my Darling~ <3")  # playing with my Darling~ <3
-        super().__init__(command_prefix=commands.when_mentioned_or("02 ", ">"),
+        game = discord.Game(name="with my Darling~ <3")
+        super().__init__(command_prefix=commands.when_mentioned_or("d>"),
                          description="Zero Two Bot for the Darling in the FranXX server",
                          game=game)
+        self.pool = None
 
     async def close(self):
-        await self.pool.close()  # close database pool
+        print("Cleaning up...")
+        await self.pool.close()
         await super().close()
 
     async def on_ready(self):
-        # database if needed
-        # self.pool = await asyncpg.create_pool(os.environ["DATABASE_URL"], ssl=ssl.SSLContext(), loop=self.loop)
+        if self.pool is None:
+            # open a connection pool to the database
+            self.pool = await asyncpg.create_pool(db, ssl=ssl.SSLContext(), loop=self.loop)
+        query = """
+            SELECT * FROM mute
+        """
+        self.muted_roles = {g: r for g, r in await self.pool.fetch(query)}
+
         print("Ready!")
         print(self.user.name)
         print(self.user.id)

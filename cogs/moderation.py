@@ -1,14 +1,15 @@
+import json
+
 import discord
-from discord.ext.commands import command
 from discord.ext import commands
+from discord.ext.commands import command
 
 
 class Moderation:
     def __init__(self, bot):
         self.bot = bot
-        self.lockdown_msg = {}
-        self.log_chan = {391483719803994113: self.bot.get_channel(413010299776532490)}
-        self.mute_role = discord.utils.get(self.bot.get_guild(391483719803994113).roles, id=392897098875404289)
+        self.lockdown_msg = {}  # TODO: move to db
+        self.log_chan = self.bot.get_channel(413010299776532490)
         self.embed_colors = {
             "kick": 0xffa500,
             "ban": 0xff0000,
@@ -25,9 +26,14 @@ class Moderation:
         embed = discord.Embed(title=f"Member {action}", description=reason, color=self.embed_colors[action])
         embed.add_field(name="Moderator", value=mod)
         embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
-        if not self.log_chan.get(member.guild.id):
-            return
-        await self.log_chan[member.guild.id].send(embed=embed)
+        if member.guild.id == 391483719803994113:
+            await self.log_chan.send(embed=embed)
+
+    async def on_guild_channel_create(self, channel):
+        if channel.guild.id in self.bot.muted_roles:
+            r_id = self.bot.muted_roles[channel.guild.id]
+            role = discord.utils.get(channel.guild.roles, id=r_id)
+            await channel.set_permissions(role, send_messages=False)
 
     async def on_command_error(self, ctx, err):
         if hasattr(ctx.command, 'on_error'):
@@ -38,18 +44,36 @@ class Moderation:
         else:
             raise err
 
-    @command(aliases=['silence', 'gag'], hidden=True)
-    async def lockdown(self, ctx):
+    @command(hidden=True)
+    async def lock(self, ctx):
         await ctx.message.delete()
-        self.lockdown_msg[ctx.guild.id] = await ctx.send("This channel is now under lockdown!")
-        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
+        msg = await ctx.send("This channel is now under lockdown!")
+        perms = ctx.channel.overwrites_for(ctx.guild.default_role)
 
-    @command(aliases=['ungag'], hidden=True)
+        query = """
+            INSERT INTO lockdown (channel_id, message_id, perms) VALUES ($1, $2, $3)
+        """
+        await self.bot.pool.execute(query, ctx.channel.id, msg.id, json.dumps(perms._values))
+
+        perms.send_messages = False
+        await ctx.channel.set_permissions(ctx.guild.default_role, overwrite=perms)
+
+    @command(hidden=True)
     async def unlock(self, ctx):
         await ctx.message.delete()
-        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=None)
-        if self.lockdown_msg.get(ctx.guild.id):
-            await self.lockdown_msg[ctx.guild.id].delete()
+        query = """
+            DELETE FROM lockdown WHERE channel_id=$1 RETURNING *
+        """
+        recs = await self.bot.pool.fetchrow(query, ctx.channel.id)
+        if not recs:
+            return
+
+        channel_id, msg_id, perms = recs
+        msg = await self.bot.get_channel(channel_id).get_message(msg_id)
+        await msg.delete()
+
+        perms = discord.PermissionOverwrite(**json.loads(perms))
+        await ctx.channel.set_permissions(ctx.guild.default_role, overwrite=perms)
         await ctx.send("This channel is no longer under lockdown.", delete_after=10)
 
     @command(hidden=True)
@@ -64,16 +88,38 @@ class Moderation:
         await target.ban()
         await self.log_action("ban", member=target, reason=reason, mod=ctx.author)
 
-    @command(hidden=True)
+    @command(hidden=True, aliases=['gag'])
     async def mute(self, ctx, target: discord.Member, *, reason=None):
         await ctx.message.delete()
-        await target.add_roles(self.mute_role)
+        r_id = self.bot.muted_roles.get(ctx.guild.id)
+        if not r_id:
+            role = await ctx.guild.create_role(name="Muted")
+            r_id = role.id
+            self.bot.muted_roles[ctx.guild.id] = r_id
+            for c in ctx.guild.text_channels:
+                await c.set_permissions(role, send_messages=False)
+
+            query = """
+                INSERT INTO mute (guild_id, role_id) VALUES ($1, $2)
+            """
+            await self.bot.pool.execute(query, ctx.guild.id, role.id)
+
+        role = discord.utils.get(ctx.guild.roles, id=r_id)
+        await target.add_roles(role)
         await self.log_action("mute", member=target, reason=reason, mod=ctx.author)
 
-    @command(hidden=True)
+    @command(hidden=True, aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
         await ctx.message.delete()
-        await target.remove_roles(self.mute_role)
+        print(self.bot.muted_roles)
+        r_id = self.bot.muted_roles[ctx.guild.id]
+        print(1)
+        if r_id:
+            print(2)
+            role = discord.utils.get(ctx.guild.roles, id=r_id)
+            if role:
+                print(3)
+                await target.remove_roles(role)
         await self.log_action("unmute", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
