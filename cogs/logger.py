@@ -11,6 +11,8 @@ class Logger:
         }
 
     async def log_message(self, action, message, new_msg=None):
+        if message.author.bot:
+            return
         embed = discord.Embed(title="Message " + action, description=f"", color=self.colors[action])
         embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
         embed.add_field(name="Channel", value=message.channel.mention)
@@ -23,9 +25,10 @@ class Logger:
         if message.guild == self.log_chan.guild:
             await self.log_message("delete", message)
 
-    async def on_message_edit(self, message, new_msg):
-        if message.guild == self.log_chan.guild:
-            await self.log_message("edit", message, new_msg)
+    async def on_message_edit(self, old, new):
+        if old.content != new.content:
+            if old.guild == self.log_chan.guild:
+                await self.log_message("edit", old, new)
 
 
 def setup(bot):
