@@ -5,6 +5,12 @@ from traceback import format_exception
 
 from discord.ext import commands
 
+# eval imports
+import asyncio  # noqa
+import discord  # noqa
+import os  # noqa
+import sys  # noqa
+
 
 class Admin:
     def __init__(self, bot):
