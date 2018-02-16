@@ -8,7 +8,6 @@ from discord.ext.commands import command
 class Moderation:
     def __init__(self, bot):
         self.bot = bot
-        self.lockdown_msg = {}  # TODO: move to db
         self.log_chan = self.bot.get_channel(413010299776532490)
         self.embed_colors = {
             "kick": 0xffa500,
