@@ -132,9 +132,9 @@ class Moderation:
             await ctx.author.send(f"Could not send a warning to `{target}`.\n"
                                   "They may have DMs disables, or have blocked me.\n\n"
                                   f"Warning text was:\n{warning}")
-            
-    @command(hidden=True, aliases=['prune, p'])
-    async def purge(self, ctx, count: int, user: discord.Member = None):
+
+    @command(hidden=True, aliases=['prune', 'p'])
+    async def purge(self, ctx, count: int, *users: discord.Member):
         await ctx.message.delete()
         if count > 100:
             await ctx.send(f"You are about to purge {count}. Are you sure you want to purge these many messages? (y/n)")
@@ -147,7 +147,7 @@ class Moderation:
             else:
                 await ctx.message.delete()
         try:
-            await ctx.channel.purge(limit=count, check=lambda message: message.author is user if user else True)
+            await ctx.channel.purge(limit=count, check=lambda message: message.author in users if users else True)
         except discord.HTTPException:
             await ctx.send("Something went wrong! Could not purge.")
 
