@@ -1,5 +1,6 @@
 import json
 
+import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands import command
@@ -133,23 +134,22 @@ class Moderation:
                                   f"Warning text was:\n{warning}")
             
     @command(hidden=True, aliases=['prune, p'])
-    async def purge(self, ctx, count: int):
-        """[p]purge <n> [@user] - purge <n> messages. Ping @user to only delete that user's messages of the last <n> messages. Multiple users also supported."""
-        if ctx.channel.permissions_for(ctx.author).manage_messages:
-            specific_users = [i.id for i in ctx.message.mentions]
-            await ctx.message.delete()
-            if count > 100:
-                await ctx.send(f"You are about to purge {count}. Are you sure you want to purge these many messages? (y/n)")
-                reply = await self.bot.wait_for("message", check=lambda message: (message.content.lower().strip() == 'y' or message.content.lower().strip() == 'n') and message.author == ctx.message.author)
-                if not reply or reply.content.lower().strip() == 'n':
-                    return await ctx.send("Cancelled purge.")
-                else:
-                    await ctx.message.delete()
-            async for message in ctx.message.channel.history(limit=count):
-                if specific_users:
-                    if message.author.id not in specific_users:
-                        continue
-                await message.delete()
+    async def purge(self, ctx, count: int, user: discord.Member = None):
+        await ctx.message.delete()
+        if count > 100:
+            await ctx.send(f"You are about to purge {count}. Are you sure you want to purge these many messages? (y/n)")
+            try:
+                reply = await self.bot.wait_for("message", check=lambda message: (message.content.lower().strip() == 'y' or message.content.lower().strip() == 'n') and message.author == ctx.message.author, timeout=10)
+            except asyncio.TimeoutError:
+                return await ctx.send("Cancelled purge.")
+            if not reply or reply.content.lower().strip() == 'n':
+                return await ctx.send("Cancelled purge.")
+            else:
+                await ctx.message.delete()
+        try:
+            await ctx.channel.purge(limit=count, check=lambda message: message.author is user if user else True)
+        except discord.HTTPException:
+            await ctx.send("Something went wrong! Could not purge.")
 
 
 def setup(bot):
