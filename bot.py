@@ -2,12 +2,13 @@ import logging
 import os
 import ssl
 
+import aiohttp
 import asyncpg
 import discord
 from discord.ext import commands
 from ruamel.yaml import YAML
 
-startup_extensions = ["fun", "moderation", "admin", "franxx", "logger"]
+startup_extensions = ["fun", "moderation", "admin", "franxx", "logger", "twitter"]
 extensions = ["cogs." + ext for ext in startup_extensions]
 
 yaml = YAML()
@@ -36,16 +37,21 @@ class ZeroTwo(commands.Bot):
                          description="Zero Two Bot for the Darling in the FranXX server",
                          game=game)
         self.pool = None
+        self.session = None
 
     async def close(self):
         print("Cleaning up...")
         await self.pool.close()
+        await self.session.close()
         await super().close()
 
     async def on_ready(self):
         if self.pool is None:
-            # open a connection pool to the database
             self.pool = await asyncpg.create_pool(db, ssl=ssl.SSLContext(), loop=self.loop)
+
+        if self.session is None:
+            self.session = aiohttp.ClientSession()
+
         query = """
             SELECT * FROM mute
         """
