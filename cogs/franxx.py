@@ -3,11 +3,13 @@ from datetime import datetime, timedelta
 import discord
 import pytz
 from discord.ext import commands
+from googletrans import Translator
 
 
 class FranXX:
     def __init__(self, bot):
         self.bot = bot
+        self.trans = Translator()
 
     async def get_next_weekday(self, startdate, day):
         days = {
@@ -48,6 +50,17 @@ class FranXX:
         embed.set_footer(text='Hype Up Bois')
         embed.set_thumbnail(url="https://myanimelist.cdn-dena.com/images/anime/1614/90408.jpg")
         await ctx.send(embed=embed)
+
+    async def translate(self, txt):
+        res = await self.bot.loop.run_in_executor(None, self.trans.translate, txt, 'en', 'ja')
+        return res.text
+
+    async def on_message_edit(self, old, new):
+        if new.channel.id == 392840122158022656:
+            if new.author.id == 414418330695237634:
+                embed = new.embeds[0]
+                embed.description = await self.translate(embed.description)
+                await new.channel.send("Translated:", embed=embed)
 
 
 def setup(bot):

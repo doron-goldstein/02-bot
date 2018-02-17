@@ -1,7 +1,7 @@
 aiohttp>=2.0.6
 pytz
 asyncpg
-bs4
+googletrans
 ruamel.yaml
 
 git+https://github.com/Rapptz/discord.py@rewrite
