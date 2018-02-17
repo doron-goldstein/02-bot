@@ -56,6 +56,8 @@ class FranXX:
         return res.text
 
     async def on_message_edit(self, old, new):
+        if new.author == new.guild.me:
+            return
         if new.channel.id == 392840122158022656:
             embed = new.embeds[0]
             embed.description = await self.translate(embed.description)
