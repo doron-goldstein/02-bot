@@ -37,7 +37,8 @@ class Moderation:
     async def on_command_error(self, ctx, err):
         if hasattr(ctx.command, 'on_error'):
             return
-
+        if isinstance(err, commands.CommandNotFound):
+            return
         if isinstance(err, commands.BadArgument):
             await ctx.send(f"Incorrect usage. Try `{ctx.prefix}help {ctx.command}` for more info.")
         else:
