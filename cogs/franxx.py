@@ -57,10 +57,9 @@ class FranXX:
 
     async def on_message_edit(self, old, new):
         if new.channel.id == 392840122158022656:
-            if new.author.id == 414418330695237634:
-                embed = new.embeds[0]
-                embed.description = await self.translate(embed.description)
-                await new.channel.send("Translated:", embed=embed)
+            embed = new.embeds[0]
+            embed.description = await self.translate(embed.description)
+            await new.channel.send("Translated:", embed=embed)
 
 
 def setup(bot):
