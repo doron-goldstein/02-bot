@@ -16,7 +16,10 @@ class Logger:
         embed = discord.Embed(title="Message " + action, description=f"", color=self.colors[action])
         embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
         embed.add_field(name="Channel", value=message.channel.mention)
-        embed.add_field(name="Content", value=message.content, inline=False)
+        if message.content:
+            embed.add_field(name="Content", value=message.content, inline=False)
+        if message.attachments and new_msg is None:
+            embed.add_field(name="Attachments", value="\n".join(a for a in message.attachments))
         if action == "edit":
             embed.add_field(name="Edited Content", value=new_msg.content, inline=False)
         await self.log_chan.send(embed=embed)
