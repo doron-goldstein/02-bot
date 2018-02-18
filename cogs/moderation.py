@@ -80,13 +80,13 @@ class Moderation:
     @command(hidden=True)
     async def kick(self, ctx, target: discord.Member, *, reason=None):
         await ctx.message.delete()
-        await ctx.guild.kick(target, reason=reason)
+        await target.kick(reason=reason)
         await self.log_action("kick", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
     async def ban(self, ctx, target: discord.Member, *, reason=None):
         await ctx.message.delete()
-        await target.ban()
+        await target.ban(reason=reason, delete_message_days=0)
         await self.log_action("ban", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True, aliases=['gag'])
