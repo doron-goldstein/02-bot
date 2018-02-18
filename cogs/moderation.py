@@ -1,6 +1,7 @@
 import json
 
 import asyncio
+from datetime import datetime
 import discord
 from discord.ext import commands
 from discord.ext.commands import command
@@ -23,7 +24,10 @@ class Moderation:
         return perms.kick_members and perms.ban_members
 
     async def log_action(self, action, *, member, reason=None, mod=None):
-        embed = discord.Embed(title=f"Member {action}", description=reason, color=self.embed_colors[action])
+        embed = discord.Embed(title=f"Member {action}", description=reason)
+        embed.color = self.embed_colors[action]
+        embed.timestamp = datetime.now()
+
         embed.add_field(name="Moderator", value=mod)
         embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
         if member.guild.id == 391483719803994113:
