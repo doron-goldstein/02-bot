@@ -28,6 +28,9 @@ Where $user is your name.
             return await ctx.send("Role must be either `pics` or `text`.")
         if role_type == "images":
             role_type == "pics"
+        role = discord.utils.get(ctx.guild.roles, id=getattr(self, role_type + "_role"))
+        if role in ctx.author.roles:
+            return await ctx.send("You have this role already.")
         try:
             await ctx.author.send(self.nsfw_msg)
         except:  # noqa
@@ -43,7 +46,6 @@ Where $user is your name.
             return await ctx.author.send("Please substitute your name (example: Zero Two) instead of `$user`.\n"
                                          "Run the command again (in the server) to complete the process.")
         elif msg.content.strip('`') == "I, {}, have read the Terms & Conditions of the /r/DarliFranXX server and agree to them.".format(ctx.author.name):  # noqa
-            role = discord.utils.get(ctx.guild.roles, id=getattr(self, role_type + "_role"))
             await ctx.author.add_roles(role)
             await ctx.author.send(f"The role `{role.name}` has been added!")
         else:
