@@ -138,8 +138,11 @@ class Moderation:
         await ctx.message.delete()
         if count > 100:
             await ctx.send(f"You are about to purge {count}. Are you sure you want to purge these many messages? (y/n)")
+
+            def check(m):
+                (m.content.lower() == 'y' or m.content.lower() == 'n') and m.author == ctx.message.author
             try:
-                reply = await self.bot.wait_for("message", check=lambda message: (message.content.lower().strip() == 'y' or message.content.lower().strip() == 'n') and message.author == ctx.message.author, timeout=10)
+                reply = await self.bot.wait_for("message", check=check, timeout=10)
             except asyncio.TimeoutError:
                 return await ctx.send("Cancelled purge.")
             if not reply or reply.content.lower().strip() == 'n':
