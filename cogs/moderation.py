@@ -46,6 +46,8 @@ class Moderation:
             return
         if isinstance(err, commands.BadArgument):
             await ctx.send(f"Incorrect usage. Try `{ctx.prefix}help {ctx.command}` for more info.")
+        if isinstance(err, commands.NoPrivateMessage):
+            await ctx.send(f"This command cannot be used in DMs.")
         else:
             raise err
 
