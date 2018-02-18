@@ -63,6 +63,7 @@ class Moderation:
         await self.bot.pool.execute(query, ctx.channel.id, msg.id, json.dumps(perms._values))
 
         perms.send_messages = False
+        perms.add_reactions = False
         await ctx.channel.set_permissions(ctx.guild.default_role, overwrite=perms)
 
     @command(hidden=True)
