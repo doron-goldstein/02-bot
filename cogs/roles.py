@@ -35,7 +35,7 @@ Where $user is your name.
             return await ctx.send(ctx.author.mention + " I couldn't send you a DM, do you have them disabled perhaps?")
 
         def check(m):
-            return m.channel.recipient == ctx.author
+            return isinstance(m.channel, discord.DMChannel) and m.channel.recipient == ctx.author
         try:
             msg = await self.bot.wait_for('message', check=check, timeout=60)
         except asyncio.TimeoutError:
