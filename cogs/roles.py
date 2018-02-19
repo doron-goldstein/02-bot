@@ -49,7 +49,7 @@ Where $user is your name.
             await ctx.author.add_roles(role)
             await ctx.author.send(f"The role `{role.name}` has been added!")
         else:
-            await ctx.send("Please run the command again with the proper format.")
+            await ctx.author.send("Please run the command again with the proper format.")
         await ctx.message.delete()
 
 
