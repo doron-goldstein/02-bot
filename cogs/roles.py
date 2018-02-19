@@ -38,18 +38,22 @@ Where $user is your name.
 
         def check(m):
             return isinstance(m.channel, discord.DMChannel) and m.channel.recipient == ctx.author
-        try:
-            msg = await self.bot.wait_for('message', check=check, timeout=60)
-        except asyncio.TimeoutError:
-            return await ctx.author.send("Command timed out.")
-        if msg.content.strip('`') == "I, $user, have read the Terms & Conditions of the /r/DarliFranXX server and agree to them.":  # noqa
-            return await ctx.author.send("Please substitute your name (example: Zero Two) instead of `$user`.\n"
-                                         "Run the command again (in the server) to complete the process.")
-        elif msg.content.strip('`') == "I, {}, have read the Terms & Conditions of the /r/DarliFranXX server and agree to them.".format(ctx.author.name):  # noqa
-            await ctx.author.add_roles(role)
-            await ctx.author.send(f"The role `{role.name}` has been added!")
-        else:
-            await ctx.author.send("Please run the command again with the proper format.")
+        while True:
+            try:
+                msg = await self.bot.wait_for('message', check=check, timeout=60)
+            except asyncio.TimeoutError:
+                return await ctx.author.send("Command timed out.")
+            if msg.content.strip('`') == "I, $user, have read the Terms & Conditions of the /r/DarliFranXX server and agree to them.":  # noqa
+                await ctx.author.send("Please substitute your name (example: Zero Two) instead of `$user`.\n"
+                                      "Try again.")
+                continue
+            elif msg.content.strip('`') == "I, {}, have read the Terms & Conditions of the /r/DarliFranXX server and agree to them.".format(ctx.author.name):  # noqa
+                await ctx.author.add_roles(role)
+                await ctx.author.send(f"The role `{role.name}` has been added!")
+                break
+            else:
+                await ctx.author.send("Please try again with the proper format.")
+                continue
         await ctx.message.delete()
 
 
