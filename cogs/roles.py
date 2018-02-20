@@ -38,6 +38,7 @@ Where $user is your name.
 
         def check(m):
             return isinstance(m.channel, discord.DMChannel) and m.channel.recipient == ctx.author
+
         while True:
             try:
                 msg = await self.bot.wait_for('message', check=check, timeout=60)
@@ -55,6 +56,14 @@ Where $user is your name.
                 await ctx.author.send("Please try again with the proper format.")
                 continue
         await ctx.message.delete()
+
+    @commands.command(aliases=["unlewd"])
+    async def purify(self, ctx):
+        roles = (discord.utils.get(ctx.guild.roles, id=r_id) for r_id in (self.text_role, self.pics_role))
+        if any(r in ctx.author.roles for r in roles):
+            await ctx.author.remove_roles(*roles)
+            return await ctx.message.add_reaction("\N{OK HAND SIGN}")
+        await ctx.send(f"You don't have any lewd roles! Use `{ctx.prefix}lewdme <role_type>` if you want to join them.")
 
 
 def setup(bot):
