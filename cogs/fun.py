@@ -30,7 +30,6 @@ class Fun:
         async with self.bot.session.get(RANDOM_URL, params={'type': type_},
                                         headers={'Authorization': self.bot.img_auth}) as resp:
             data = await resp.json()
-        print(data)
         url = data['url']
 
         return discord.Embed(title=title) \
@@ -79,8 +78,9 @@ class Fun:
         elif user is None:
             return await ctx.send(f"{ctx.author.name} patted.... No one!")
 
-        embed = await self.make_embed(f"{ctx.author.name} patted {user.name}!", 'pat')
-        await ctx.send(embed=embed)
+        # embed = await self.make_embed(f"{ctx.author.name} patted {user.name}!", 'pat')
+        # await ctx.send(embed=embed)
+        await ctx.send(f"{ctx.author.name} patted {user.name}!")
 
     @command()
     async def kiss(self, ctx, user: discord.Member = None):
@@ -90,8 +90,10 @@ class Fun:
             return await ctx.send(f"{ctx.author.name} kissed... Themselves? How does that even work??")
         elif user is None:
             return await ctx.send(f"{ctx.author.name} kissed.... No one!")
-        embed = await self.make_embed(f"{ctx.author.name} kissed {user.name}!", 'kiss')
-        await ctx.send(embed=embed)
+
+        # embed = await self.make_embed(f"{ctx.author.name} kissed {user.name}!", 'kiss')
+        # await ctx.send(embed=embed)
+        await ctx.send(f"{ctx.author.name} kissed {user.name}!")
 
     @command()
     async def hug(self, ctx, user: discord.Member = None):
@@ -101,8 +103,10 @@ class Fun:
             return await ctx.send(f"{ctx.author.name} hugged... Themselves? I guess.")
         elif user is None:
             return await ctx.send(f"{ctx.author.name} hugged.... No one!")
-        embed = await self.make_embed(f"{ctx.author.name} gave {user.name} a hug!", 'hug')
-        await ctx.send(embed=embed)
+
+        # embed = await self.make_embed(f"{ctx.author.name} gave {user.name} a hug!", 'hug')
+        # await ctx.send(embed=embed)
+        await ctx.send(f"{ctx.author.name} gave {user.name} a hug!")
 
     @command()
     async def lick(self, ctx, user: discord.Member = None):
@@ -112,8 +116,10 @@ class Fun:
             return await ctx.send(f"{ctx.author.name} licked... Themselves? What?")
         elif user is None:
             return await ctx.send(f"{ctx.author.name} licked.... No one!")
-        embed = await self.make_embed(f"{ctx.author.name} Licked {user.name}!", 'lick')
-        await ctx.send(embed=embed)
+
+        # embed = await self.make_embed(f"{ctx.author.name} Licked {user.name}!", 'lick')
+        # await ctx.send(embed=embed)
+        await ctx.send(f"{ctx.author.name} Licked {user.name}!")
 
     @command()
     async def saturday(self, ctx):
