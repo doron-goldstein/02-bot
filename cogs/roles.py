@@ -7,8 +7,10 @@ from discord.ext import commands
 class Roles:
     def __init__(self, bot):
         self.bot = bot
-        self.text_role = 407759891927924737
-        self.pics_role = 402315991918575636
+        # self.text_role = 407759891927924737
+        self.text_role = 252826896180445184
+        # self.pics_role = 402315991918575636
+        self.pics_role = 252829569151664129
         self.nsfw_msg = """
             Hi! Before you accept the NSFW role(s) that grant you access to the hidden NSFW-content channels, you must agree to the following terms:
 \* That you, the user, claim to be 18 years of age or older,
@@ -59,7 +61,7 @@ Where $user is your name.
 
     @commands.command(aliases=["unlewd"])
     async def purify(self, ctx):
-        roles = (discord.utils.get(ctx.guild.roles, id=r_id) for r_id in (self.text_role, self.pics_role))
+        roles = [discord.utils.get(ctx.guild.roles, id=r_id) for r_id in (self.text_role, self.pics_role)]
         if any(r in ctx.author.roles for r in roles):
             await ctx.author.remove_roles(*roles)
             return await ctx.message.add_reaction("\N{OK HAND SIGN}")
