@@ -30,7 +30,7 @@ class Fun:
         async with self.bot.session.get(RANDOM_URL, params={'type': type_},
                                         headers={'Authorization': self.bot.img_auth}) as resp:
             data = await resp.json()
-
+        print(data)
         url = data['url']
 
         return discord.Embed(title=title) \
