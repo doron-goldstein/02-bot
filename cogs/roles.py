@@ -7,10 +7,8 @@ from discord.ext import commands
 class Roles:
     def __init__(self, bot):
         self.bot = bot
-        # self.text_role = 407759891927924737
-        self.text_role = 252826896180445184
-        # self.pics_role = 402315991918575636
-        self.pics_role = 252829569151664129
+        self.text_role = 407759891927924737
+        self.pics_role = 402315991918575636
         self.nsfw_msg = """
             Hi! Before you accept the NSFW role(s) that grant you access to the hidden NSFW-content channels, you must agree to the following terms:
 \* That you, the user, claim to be 18 years of age or older,
