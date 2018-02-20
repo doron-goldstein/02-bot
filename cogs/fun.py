@@ -5,6 +5,10 @@ from discord.ext import commands
 from discord.ext.commands import command
 
 
+BASE_URL = "http://api.weeb.sh/images"
+RANDOM_URL = BASE_URL + "/random"
+
+
 class Fun:
     def __init__(self, bot):
         self.bot = bot
@@ -21,6 +25,17 @@ class Fun:
             90: "How come you're not all over eachother already!? You're a perfect couple!",
             100: "This is how the gods meet their partners. It'd be a shame for mankind if you two don't get together."
         }
+
+    async def make_embed(self, title, type_):
+        async with self.bot.session.get(RANDOM_URL, params={'type': type_},
+                                        headers={'Authorization': self.bot.img_auth}) as resp:
+            data = await resp.json()
+
+        url = data['url']
+
+        return discord.Embed(title=title) \
+                      .set_image(url=url) \
+                      .set_footer(text="Powered by weeb.sh")
 
     @command()
     async def ship(self, ctx, user1: discord.Member = None, user2: discord.Member = None):
@@ -63,7 +78,9 @@ class Fun:
             return await ctx.send(f"{ctx.author.name} patted... Themselves? For some reason.")
         elif user is None:
             return await ctx.send(f"{ctx.author.name} patted.... No one!")
-        await ctx.send(f"{ctx.author.name} patted {user.name}!")
+
+        embed = await self.make_embed(f"{ctx.author.name} patted {user.name}!", 'pat')
+        await ctx.send(embed=embed)
 
     @command()
     async def kiss(self, ctx, user: discord.Member = None):
@@ -73,7 +90,8 @@ class Fun:
             return await ctx.send(f"{ctx.author.name} kissed... Themselves? How does that even work??")
         elif user is None:
             return await ctx.send(f"{ctx.author.name} kissed.... No one!")
-        await ctx.send(f"{ctx.author.name} kissed {user.name}!")
+        embed = await self.make_embed(f"{ctx.author.name} kissed {user.name}!", 'kiss')
+        await ctx.send(embed=embed)
 
     @command()
     async def hug(self, ctx, user: discord.Member = None):
@@ -83,7 +101,8 @@ class Fun:
             return await ctx.send(f"{ctx.author.name} hugged... Themselves? I guess.")
         elif user is None:
             return await ctx.send(f"{ctx.author.name} hugged.... No one!")
-        await ctx.send(f"{ctx.author.name} gave {user.name} a hug!")
+        embed = await self.make_embed(f"{ctx.author.name} gave {user.name} a hug!", 'hug')
+        await ctx.send(embed=embed)
 
     @command()
     async def lick(self, ctx, user: discord.Member = None):
@@ -93,7 +112,8 @@ class Fun:
             return await ctx.send(f"{ctx.author.name} licked... Themselves? What?")
         elif user is None:
             return await ctx.send(f"{ctx.author.name} licked.... No one!")
-        await ctx.send(f"{ctx.author.name} Licked {user.name}!")
+        embed = await self.make_embed(f"{ctx.author.name} Licked {user.name}!", 'lick')
+        await ctx.send(embed=embed)
 
     @command()
     async def saturday(self, ctx):

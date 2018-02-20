@@ -17,10 +17,12 @@ try:
         config = yaml.load(f)
         token = config["token"]
         db = config["db"]
+        img_auth = config["img_auth"]
         dev = True
 except:  # noqa
     token = os.environ.get("TOKEN")
     db = os.environ.get("DATABASE_URL")
+    img_auth = os.environ.get("WOLKE_TOKEN")
     dev = False
 
 logging.basicConfig(level=logging.INFO)
@@ -36,6 +38,7 @@ class ZeroTwo(commands.Bot):
         super().__init__(command_prefix=get_prefix,
                          description="Zero Two Bot for the Darling in the FranXX server",
                          game=game)
+        self.img_auth = "Wolke " + img_auth
         self.pool = None
         self.session = None
 
