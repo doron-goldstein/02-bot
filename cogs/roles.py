@@ -24,6 +24,7 @@ Where $user is your name.
     @commands.guild_only()
     @commands.command()
     async def lewdme(self, ctx, role_type):
+        """Join NSFW channel roles"""
         if role_type not in ("pics", "images", "text"):
             return await ctx.send("Role must be either `pics` or `text`.")
         if role_type == "images":
@@ -59,6 +60,7 @@ Where $user is your name.
 
     @commands.command(aliases=["unlewd"])
     async def purify(self, ctx):
+        """Leave all NSFW roles"""
         roles = [discord.utils.get(ctx.guild.roles, id=r_id) for r_id in (self.text_role, self.pics_role)]
         if any(r in ctx.author.roles for r in roles):
             await ctx.author.remove_roles(*roles)
