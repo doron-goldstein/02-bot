@@ -9,7 +9,6 @@ def restricted():
     """Restrict commands to #bot_channel"""
     async def predicate(ctx):
         if ctx.guild.id == FRANXX_ID:
-            if ctx.channel.id == BOT_CHANNEL:
-                return True
-            return False
+            return ctx.channel.id == BOT_CHANNEL
+        return True
     return commands.check(predicate)
