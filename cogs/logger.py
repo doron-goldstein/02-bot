@@ -19,7 +19,9 @@ class Logger:
         if message.content:
             embed.add_field(name="Content", value=message.content, inline=False)
         if message.attachments and new_msg is None:
-            embed.add_field(name="Attachments", value="\n".join(a.url for a in message.attachments))
+            embed.add_image(url=message.attachments[0].url)
+            if len(message.attachments > 1):
+                embed.add_field(name="Attachments", value="\n".join(a.url for a in message.attachments[1:]))
         if action == "edit":
             embed.add_field(name="Edited Content", value=new_msg.content, inline=False)
         await self.log_chan.send(embed=embed)
