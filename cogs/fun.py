@@ -118,6 +118,18 @@ class Fun:
         await ctx.send(embed=embed)
 
     @command()
+    async def cuddle(self, ctx, user: discord.Member = None):
+        """cuddle someone!"""
+
+        if user == ctx.author:
+            return await ctx.send(f"{ctx.author.name} is cuddling all alone...")
+        elif user is None:
+            return await ctx.send(f"{ctx.author.name} cuddled.... No one!")
+
+        embed = await self.make_embed(f"{ctx.author.name} cuddled {user.name}!", 'cuddle')
+        await ctx.send(embed=embed)
+
+    @command()
     async def saturday(self, ctx):
         """Saturday?"""
 
