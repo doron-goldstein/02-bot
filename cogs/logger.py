@@ -11,6 +11,7 @@ class Logger:
         }
 
     async def log_message(self, action, message, new_msg=None):
+        f = None
         if message.author.bot:
             return
         embed = discord.Embed(title="Message " + action, description=f"", color=self.colors[action])
@@ -19,12 +20,14 @@ class Logger:
         if message.content:
             embed.add_field(name="Content", value=message.content, inline=False)
         if message.attachments and new_msg is None:
-            embed.set_image(url=message.attachments[0].proxy_url)
+            message.attachments[0].save("attached.png")
+            f = discord.File('attached.png')
+            embed.set_image(url="attachment://attached.png")
             if len(message.attachments) > 1:
                 embed.add_field(name="Attachments", value="\n".join(a.url for a in message.attachments[1:]))
         if action == "edit":
             embed.add_field(name="Edited Content", value=new_msg.content, inline=False)
-        await self.log_chan.send(embed=embed)
+        await self.log_chan.send(embed=embed, file=f)
 
     async def on_message_delete(self, message):
         if message.guild == self.log_chan.guild:
