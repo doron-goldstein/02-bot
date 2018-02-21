@@ -3,7 +3,7 @@ import random
 import discord
 from discord.ext import commands
 from discord.ext.commands import command
-from ..utils.checks import restricted
+from utils.checks import restricted
 
 
 BASE_URL = "https://api.weeb.sh/images"

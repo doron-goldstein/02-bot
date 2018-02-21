@@ -2,7 +2,7 @@ import asyncio
 
 import discord
 from discord.ext import commands
-from ..utils.checks import restricted
+from utils.checks import restricted
 
 
 class Roles:
