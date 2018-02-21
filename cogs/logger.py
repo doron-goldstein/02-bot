@@ -19,7 +19,7 @@ class Logger:
         if message.content:
             embed.add_field(name="Content", value=message.content, inline=False)
         if message.attachments and new_msg is None:
-            embed.set_image(url=message.attachments[0].url)
+            embed.set_image(url=message.attachments[0].proxy_url)
             if len(message.attachments) > 1:
                 embed.add_field(name="Attachments", value="\n".join(a.url for a in message.attachments[1:]))
         if action == "edit":
