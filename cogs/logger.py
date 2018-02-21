@@ -20,7 +20,7 @@ class Logger:
         if message.content:
             embed.add_field(name="Content", value=message.content, inline=False)
         if message.attachments and new_msg is None:
-            message.attachments[0].save("attached.png")
+            await message.attachments[0].save("attached.png")
             f = discord.File('attached.png')
             embed.set_image(url="attachment://attached.png")
             if len(message.attachments) > 1:
