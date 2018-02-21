@@ -2,6 +2,7 @@ import asyncio
 
 import discord
 from discord.ext import commands
+from ..utils.checks import restricted
 
 
 class Roles:
@@ -23,6 +24,7 @@ Where $user is your name.
 
     @commands.guild_only()
     @commands.command()
+    @restricted()
     async def lewdme(self, ctx, role_type):
         """Join NSFW channel roles"""
         if role_type not in ("pics", "images", "text"):
@@ -59,6 +61,7 @@ Where $user is your name.
         await ctx.message.delete()
 
     @commands.command(aliases=["unlewd"])
+    @restricted()
     async def purify(self, ctx):
         """Leave all NSFW roles"""
         roles = [discord.utils.get(ctx.guild.roles, id=r_id) for r_id in (self.text_role, self.pics_role)]
