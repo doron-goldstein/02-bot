@@ -21,8 +21,8 @@ class Logger:
             embed.add_field(name="Content", value=message.content, inline=False)
         if message.attachments and new_msg is None:
             await message.attachments[0].save("attached.png")
-            f = discord.File('attached.png')
-            embed.set_image(url="attachment://attached.png")
+            f = discord.File('attached.png', "img.png")
+            embed.set_image(url="attachment://img.png")
             if len(message.attachments) > 1:
                 embed.add_field(name="Attachments", value="\n".join(a.url for a in message.attachments[1:]))
         if action == "edit":
