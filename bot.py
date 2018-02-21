@@ -10,7 +10,6 @@ from ruamel.yaml import YAML
 
 startup_extensions = ["fun", "moderation", "admin", "franxx", "logger", "roles"]
 extensions = ["cogs." + ext for ext in startup_extensions]
-
 yaml = YAML()
 try:
     with open("config.yaml") as f:

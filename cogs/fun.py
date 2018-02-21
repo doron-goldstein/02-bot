@@ -3,6 +3,7 @@ import random
 import discord
 from discord.ext import commands
 from discord.ext.commands import command
+from ..utils.checks import restricted
 
 
 BASE_URL = "https://api.weeb.sh/images"
@@ -37,6 +38,7 @@ class Fun:
                       .set_footer(text="Powered by weeb.sh")
 
     @command()
+    @restricted()
     async def ship(self, ctx, user1: discord.Member = None, user2: discord.Member = None):
         """Could these two be a good couple? What are the chances?"""
 
@@ -58,6 +60,7 @@ class Fun:
             return await ctx.send("I can't recognize who that is! Did you misspell their name, Darling?")
 
     @command()
+    @restricted()
     async def sync(self, ctx, thing1, thing2=None):
         """What is the sync % between these two??"""
 
@@ -70,6 +73,7 @@ class Fun:
         await ctx.send(f"**{thing1}** and **{thing2}** have a sync rate of {chance}%!")
 
     @command()
+    @restricted()
     async def pat(self, ctx, user: discord.Member = None):
         """Pat someone!"""
 
@@ -82,6 +86,7 @@ class Fun:
         await ctx.send(embed=embed)
 
     @command()
+    @restricted()
     async def kiss(self, ctx, user: discord.Member = None):
         """Kiss someone!"""
 
@@ -94,6 +99,7 @@ class Fun:
         await ctx.send(embed=embed)
 
     @command()
+    @restricted()
     async def hug(self, ctx, user: discord.Member = None):
         """Hug someone!"""
 
@@ -106,6 +112,7 @@ class Fun:
         await ctx.send(embed=embed)
 
     @command()
+    @restricted()
     async def lick(self, ctx, user: discord.Member = None):
         """Lick someone!"""
 
@@ -118,6 +125,7 @@ class Fun:
         await ctx.send(embed=embed)
 
     @command()
+    @restricted()
     async def cuddle(self, ctx, user: discord.Member = None):
         """Cuddle someone!"""
 
