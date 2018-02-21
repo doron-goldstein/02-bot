@@ -119,7 +119,7 @@ class Fun:
 
     @command()
     async def cuddle(self, ctx, user: discord.Member = None):
-        """cuddle someone!"""
+        """Cuddle someone!"""
 
         if user == ctx.author:
             return await ctx.send(f"{ctx.author.name} is cuddling all alone...")
