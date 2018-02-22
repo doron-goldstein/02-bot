@@ -40,6 +40,7 @@ class Admin:
             "author": ctx.author,
             "bot": ctx.bot
         }
+        env.update(globals())
 
         code = code.strip("`")
         code = code.lstrip("py\n")
