@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 
 import discord
 import pytz
@@ -25,28 +25,37 @@ class FranXX:
         days = timedelta((7 + weekday - startdate.weekday()) % 7)
         return startdate + days
 
-    def get_remaining_time(self):
+    def get_remaining(self):
         day = "Saturday"
         hour, minute = "23:30".split(":")
 
         time_now = datetime.now(pytz.timezone("Japan")).replace(tzinfo=None)
         air_date = self.get_next_weekday(time_now, day)
         show_airs = air_date.replace(hour=int(hour), minute=int(minute))
-        remaining = show_airs - time_now
 
-        if remaining.days < 0:
-            return f'{6} Days {remaining.seconds // 3600} Hours and {(remaining.seconds // 60)%60} Minutes.'
-        else:
-            return (f'{remaining.days} Days '
-                    f'{remaining.seconds // 3600} Hours '
-                    f'and {(remaining.seconds // 60)%60} Minutes.')
+        remaining = show_airs - time_now
+        return remaining
+
+    def get_formatted_time(self, *, delta=0):
+        remaining = self.get_remaining() + timedelta(hours=delta)
+
+        days = remaining.days
+        hours, rem = divmod(remaining.seconds, 3600)
+        minutes, seconds = divmod(rem, 60)
+
+        fmt = f' Days, {hours} Hours, and {minutes} Minutes.'
+        time = '6' + fmt if days < 0 else str(days) + fmt
+        return time
 
     @commands.command(aliases=["episode", "nextepisode", "airtime"])
     async def next(self, ctx):
         """Countdown to next episode of the anime."""
-        remaining = self.get_remaining_time()
+        remaining = self.get_formatted_time()
+        CR_time = self.get_formatted_time(delta=2.5)
+
         embed = discord.Embed(title="Darling in the FranXX", color=0x0066CC)
-        embed.add_field(name="Next Episode", value=remaining)
+        embed.add_field(name="Air Time", value=remaining, inline=False)
+        embed.add_field(name="Crunchyroll Release", value=CR_time)
         embed.set_footer(text='Hype Up Bois')
         embed.set_thumbnail(url="https://myanimelist.cdn-dena.com/images/anime/1614/90408.jpg")
         await ctx.send(embed=embed)
