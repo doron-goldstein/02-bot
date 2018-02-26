@@ -20,9 +20,8 @@ class Moderation:
         }
 
     async def __local_check(self, ctx):
-        # perms = ctx.author.guild_permissions
-        # return perms.kick_members and perms.ban_members
-        return False
+        perms = ctx.author.guild_permissions
+        return perms.kick_members and perms.ban_members
 
     async def log_action(self, action, *, member, reason=None, mod=None):
         embed = discord.Embed(title=f"Member {action}", description=reason)
