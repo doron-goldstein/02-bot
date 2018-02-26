@@ -8,7 +8,7 @@ import discord
 class Roles:
     def __init__(self, bot):
         self.bot = bot
-        self.msg_id = 416217933270876160
+        self.msg_id = 417823406617001987
         self.role_dict = {
             'SeXX': 407759891927924737,
             '02bounce': 402315991918575636,
