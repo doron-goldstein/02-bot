@@ -20,8 +20,9 @@ class Moderation:
         }
 
     async def __local_check(self, ctx):
-        perms = ctx.author.guild_permissions
-        return perms.kick_members and perms.ban_members
+        # perms = ctx.author.guild_permissions
+        # return perms.kick_members and perms.ban_members
+        return False
 
     async def log_action(self, action, *, member, reason=None, mod=None):
         embed = discord.Embed(title=f"Member {action}", description=reason)
@@ -42,12 +43,40 @@ class Moderation:
     async def on_command_error(self, ctx, err):
         if hasattr(ctx.command, 'on_error'):
             return
+
         if isinstance(err, commands.CommandNotFound):
             return
+
         if isinstance(err, commands.BadArgument):
             await ctx.send(f"Incorrect usage. Try `{ctx.prefix}help {ctx.command}` for more info.")
+
         if isinstance(err, commands.NoPrivateMessage):
             await ctx.send(f"This command cannot be used in DMs.")
+
+        if isinstance(err, commands.CheckFailure):
+            if ctx.author.id == 137406559784402944:
+                return await ctx.author.send("Not today, my little trap friend.")
+            if discord.utils.get(ctx.guild.roles, id=412589195702435840) in ctx.author.roles:
+                return
+
+            if ctx.command.name in ("kick", "ban"):
+                try:
+                    await ctx.author.send("You're too weak, Darling.")
+                except:  # noqa
+                    pass
+                await ctx.invoke(self.bot.get_command("kick"), ctx.author, reason="YOU ARE TOO WEAK, MORTAL")
+
+            elif ctx.command.name == "mute":
+                try:
+                    await ctx.author.send("You talk too much, Darling.")
+                except:  # noqa
+                    pass
+                await ctx.invoke(self.bot.get_command("mute"), ctx.author, reason="THOU SHALL NOT SPEAK")
+                await asyncio.sleep(300)
+                await ctx.invoke(self.bot.get_command("unmute"), ctx.author, reason="YOU PAY FOR YOUR MISTAKES")
+
+            else:
+                raise err
         else:
             raise err
 
@@ -118,7 +147,10 @@ class Moderation:
 
     @command(hidden=True, aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
-        await ctx.message.delete()
+        try:
+            await ctx.message.delete()
+        except:  # noqa
+            pass
         r_id = self.bot.muted_roles[ctx.guild.id]
         if r_id:
             role = discord.utils.get(ctx.guild.roles, id=r_id)
