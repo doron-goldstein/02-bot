@@ -64,6 +64,7 @@ class Moderation:
                 except:  # noqa
                     pass
                 await ctx.invoke(self.bot.get_command("kick"), ctx.author, reason="YOU ARE TOO WEAK, MORTAL")
+                await ctx.channel.send(ctx.author.mention + " Is too weak to be my Darling!")
 
             elif ctx.command.name == "mute":
                 try:
@@ -71,6 +72,7 @@ class Moderation:
                 except:  # noqa
                     pass
                 await ctx.invoke(self.bot.get_command("mute"), ctx.author, reason="THOU SHALL NOT SPEAK")
+                await ctx.channel.send(ctx.author.mention + " Will you ever shut up...? Oh.")
                 await asyncio.sleep(300)
                 await ctx.invoke(self.bot.get_command("unmute"), ctx.author, reason="YOU PAY FOR YOUR MISTAKES")
 
