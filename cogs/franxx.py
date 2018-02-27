@@ -10,6 +10,8 @@ class FranXX:
     def __init__(self, bot):
         self.bot = bot
         self.trans = Translator()
+        self.greet_channel = bot.get_channel(391483720244264961)
+        self.greet_log = bot.get_channel(392444419535667200)
 
     def get_next_weekday(self, startdate: datetime, day: str) -> datetime:
         """Get the next date per day of the week"""
@@ -76,6 +78,16 @@ class FranXX:
             embed = new.embeds[0]
             embed.description = await self.translate(embed.description)
             await new.channel.send("Translated:", embed=embed)
+
+    async def on_member_join(self, member):
+        await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
+                                      "Only those who read <#391490980249075722> can ride Strelizia with me.\n"
+                                      "Proceed to there to collect your roles as well!")
+        await self.greet_log.send(f"\N{WHITE HEAVY CHECK MARK} {member.mention} has joined the server.")
+
+    async def on_member_remove(self, member):
+        await self.greet_channel.send(f"Begone, *THOT!* {member.mention} has left the server!")
+        await self.greet_log.send(f"\N{CROSS MARK} {member.mention} has left the server.")
 
 
 def setup(bot):
