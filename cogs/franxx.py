@@ -11,7 +11,9 @@ class FranXX:
         self.bot = bot
         self.trans = Translator()
 
-    def get_next_weekday(self, startdate, day):
+    def get_next_weekday(self, startdate: datetime, day: str) -> datetime:
+        """Get the next date per day of the week"""
+
         days = {
             "Monday": 0,
             "Tuesday": 1,
@@ -25,19 +27,20 @@ class FranXX:
         days = timedelta((7 + weekday - startdate.weekday()) % 7)
         return startdate + days
 
-    def get_remaining(self):
-        day = "Saturday"
-        hour, minute = "23:30".split(":")
+    def get_remaining(self, day: str, *, hour: int, minute: int) -> timedelta:
+        """Returns the time between now and and the next `day` at `hour`:`minute`"""
 
         time_now = datetime.now(pytz.timezone("Japan")).replace(tzinfo=None)
         air_date = self.get_next_weekday(time_now, day)
-        show_airs = air_date.replace(hour=int(hour), minute=int(minute))
+        show_airs = air_date.replace(hour=hour, minute=minute)
 
         remaining = show_airs - time_now
         return remaining
 
-    def get_formatted_time(self, *, delta=0):
-        remaining = self.get_remaining() + timedelta(hours=delta)
+    def get_formatted_time(self, day: str, *, hour: int, minute: int, delta=0) -> str:
+        """Format time until `day` at `hour`:`minute`"""
+
+        remaining = self.get_remaining(day, hour=hour, minute=minute) + timedelta(hours=delta)
 
         days = remaining.days
         hours, rem = divmod(remaining.seconds, 3600)
@@ -50,12 +53,14 @@ class FranXX:
     @commands.command(aliases=["episode", "nextepisode", "airtime"])
     async def next(self, ctx):
         """Countdown to next episode of the anime."""
-        remaining = self.get_formatted_time()
-        CR_time = self.get_formatted_time(delta=2.5)
+        air_time = self.get_formatted_time("Saturday", hour=23, minute=30)
+        crunchy = self.get_formatted_time("Saturday", hour=23, minute=30, delta=2.5)
+        preview = self.get_formatted_time("Thursday", hour=6, minute=0,)
 
         embed = discord.Embed(title="Darling in the FranXX", color=0x0066CC)
-        embed.add_field(name="Air Time", value=remaining, inline=False)
-        embed.add_field(name="Crunchyroll Release", value=CR_time)
+        embed.add_field(name="Air Time", value=air_time, inline=False)
+        embed.add_field(name="Crunchyroll Release", value=crunchy)
+        embed.add_field(name="Episode Preview", value=preview)
         embed.set_footer(text='Hype Up Bois')
         embed.set_thumbnail(url="https://myanimelist.cdn-dena.com/images/anime/1614/90408.jpg")
         await ctx.send(embed=embed)
