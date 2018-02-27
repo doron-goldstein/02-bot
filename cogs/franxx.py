@@ -86,7 +86,8 @@ class FranXX:
         await self.greet_log.send(f"\N{WHITE HEAVY CHECK MARK} {member.mention} has joined the server.")
 
     async def on_member_remove(self, member):
-        await self.greet_channel.send(f"Begone, *THOT!* {member.mention} has left the server!")
+        await self.greet_channel.send(f"Begone, *THOT!* {member.mention} has left the server!\n"
+                                      "https://i.imgur.com/VMoDwC5.gifv")
         await self.greet_log.send(f"\N{CROSS MARK} {member.mention} has left the server.")
 
 
