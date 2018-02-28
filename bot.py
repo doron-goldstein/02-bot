@@ -75,6 +75,8 @@ class ZeroTwo(commands.Bot):
 
     async def on_message(self, message):  # allow case-insensitive commands
         ctx = await self.get_context(message)
+        if ctx.author.bot:
+            return
         if ctx.prefix is not None:
             ctx.command = self.all_commands.get(ctx.invoked_with.lower())
             await self.invoke(ctx)
