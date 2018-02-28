@@ -57,7 +57,7 @@ class FranXX:
         """Countdown to next episode of the anime."""
         air_time = self.get_formatted_time("Saturday", hour=23, minute=30)
         crunchy = self.get_formatted_time("Saturday", hour=23, minute=30, delta=2.5)
-        preview = self.get_formatted_time("Thursday", hour=6, minute=0,)
+        preview = self.get_formatted_time("Thursday", hour=18, minute=0,)
 
         embed = discord.Embed(title="Darling in the FranXX", color=0x0066CC)
         embed.add_field(name="Air Time", value=air_time, inline=False)
