@@ -49,7 +49,12 @@ class FranXX:
         minutes, seconds = divmod(rem, 60)
 
         fmt = f' Days, {hours} Hours, and {minutes} Minutes.'
-        time = '6' + fmt if days < 0 else str(days) + fmt
+        if days < 0:
+            time = '6' + fmt
+        elif days >= 7:
+            time = '0' + fmt
+        else:
+            time = str(days) + fmt
         return time
 
     @commands.command(aliases=["episode", "nextepisode", "airtime"])
