@@ -52,32 +52,6 @@ class Moderation:
         if isinstance(err, commands.NoPrivateMessage):
             await ctx.send(f"This command cannot be used in DMs.")
 
-        if isinstance(err, commands.CheckFailure):
-            if ctx.author.id == 137406559784402944:
-                return await ctx.author.send("Not today, my little trap friend.")
-            if discord.utils.get(ctx.guild.roles, id=412589195702435840) in ctx.author.roles:
-                return
-
-            if ctx.command.name in ("kick", "ban"):
-                try:
-                    await ctx.author.send("You're too weak, Darling.")
-                except:  # noqa
-                    pass
-                await ctx.invoke(self.bot.get_command("kick"), ctx.author, reason="YOU ARE TOO WEAK, MORTAL")
-                await ctx.channel.send(ctx.author.mention + " Is too weak to be my Darling!")
-
-            elif ctx.command.name == "mute":
-                try:
-                    await ctx.author.send("You talk too much, Darling.")
-                except:  # noqa
-                    pass
-                await ctx.invoke(self.bot.get_command("mute"), ctx.author, reason="THOU SHALL NOT SPEAK")
-                await ctx.channel.send(ctx.author.mention + " Will you ever shut up...? Oh.")
-                await asyncio.sleep(300)
-                await ctx.invoke(self.bot.get_command("unmute"), ctx.author, reason="YOU PAY FOR YOUR MISTAKES")
-
-            else:
-                raise err
         else:
             raise err
 
