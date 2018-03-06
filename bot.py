@@ -36,7 +36,7 @@ class ZeroTwo(commands.Bot):
         game = discord.Game(name="with my Darling~ <3")
         super().__init__(command_prefix=get_prefix,
                          description="Zero Two Bot for the Darling in the FranXX server",
-                         game=game)
+                         activity=game)
         self.img_auth = "Wolke " + img_auth
         self.pool = None
         self.session = None
