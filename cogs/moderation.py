@@ -146,6 +146,21 @@ class Moderation:
             role = discord.utils.get(ctx.guild.roles, id=r_id)
             if role:
                 await target.remove_roles(role)
+
+        fmt = f"You've been unmuted by {ctx.author}!"
+        if reason:
+            fmt += f"\nReason: \"{reason}\""
+
+        try:
+            await target.send(fmt)
+        except:  # noqa
+            try:
+                await ctx.author.send(f"Could not send unmute notice to `{target}`.\n"
+                                      "They may have DMs disables, or have blocked me.\n\n"
+                                      f"Unmute Reason:\n{reason}")
+            except:  # noqa
+                pass
+
         await self.log_action("unmute", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
