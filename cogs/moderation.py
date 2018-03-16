@@ -118,7 +118,22 @@ class Moderation:
 
         role = discord.utils.get(ctx.guild.roles, id=r_id)
         await target.add_roles(role)
-        await self.log_action("mute", member=target, reason=reason, mod=ctx.author)
+
+        fmt = f"You've been muted by {ctx.author}!"
+        if reason:
+            fmt += f"\nReason: \"{reason}\""
+
+        try:
+            await target.send(fmt)
+        except:  # noqa
+            try:
+                await ctx.author.send(f"Could not send mute notice to `{target}`.\n"
+                                      "They may have DMs disables, or have blocked me.\n\n"
+                                      f"Mute Reason:\n{reason}")
+            except:  # noqa
+                pass
+        else:
+            await self.log_action("mute", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True, aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
@@ -142,9 +157,12 @@ class Moderation:
             else:
                 await target.send(f"You've received a warning from {ctx.author}:\n \"{warning}\"")
         except:  # noqa
-            await ctx.author.send(f"Could not send a warning to `{target}`.\n"
-                                  "They may have DMs disables, or have blocked me.\n\n"
-                                  f"Warning text was:\n{warning}")
+            try:
+                await ctx.author.send(f"Could not send a warning to `{target}`.\n"
+                                      "They may have DMs disables, or have blocked me.\n\n"
+                                      f"Warning text was:\n{warning}")
+            except:  # noqa
+                pass
         else:
             await self.log_action("warn", member=target, reason=warning, mod=ctx.author)
 
