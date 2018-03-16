@@ -141,11 +141,12 @@ class Moderation:
                 await target.send(f"You've received a warning from {ctx.author}!")
             else:
                 await target.send(f"You've received a warning from {ctx.author}:\n \"{warning}\"")
-                await self.log_action("warn", member=target, reason=warning, mod=ctx.author)
         except:  # noqa
             await ctx.author.send(f"Could not send a warning to `{target}`.\n"
                                   "They may have DMs disables, or have blocked me.\n\n"
                                   f"Warning text was:\n{warning}")
+        else:
+            await self.log_action("warn", member=target, reason=warning, mod=ctx.author)
 
     @command(hidden=True, aliases=['prune', 'p'])
     async def purge(self, ctx, count: int, *users: discord.Member):
