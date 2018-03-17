@@ -1,6 +1,7 @@
 import inspect
 from contextlib import redirect_stdout
 from io import StringIO
+import time
 from traceback import format_exception
 
 from discord.ext import commands
@@ -63,6 +64,14 @@ class Admin:
         stdout = out.read()
         if stdout is not "" or result is not None:
             await ctx.send(f"```py\n{out.read()}\n{result}```")
+
+    @commands.command(hidden=True)
+    async def ping(self, ctx):
+        before = time.monotonic()
+        msg = await ctx.send("Pinging... \N{TABLE TENNIS PADDLE AND BALL}")
+        after = time.monotonic()
+        ping = round((after - before) * 1000, 2)
+        await msg.edit(content=f"\N{TABLE TENNIS PADDLE AND BALL} Pong! **{ping}**ms")
 
 
 def setup(bot):
