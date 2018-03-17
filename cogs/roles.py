@@ -18,7 +18,7 @@ class Roles:
             'BlueOni': 412069721832292372,
             '🎤': 416893959814512641,
             'klaxo': 403740756105363457,
-            'terraria': 424641740381749259
+            'terraria': 424639819852021763
         }
 
     async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
