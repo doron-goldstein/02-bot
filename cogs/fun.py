@@ -1,13 +1,18 @@
+import json
 import random
+from io import BytesIO
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import command
+
 from utils.checks import restricted
 
-
-BASE_URL = "https://api.weeb.sh/images"
-RANDOM_URL = BASE_URL + "/random"
+BASE_URL = "https://api.weeb.sh"
+IMAGES_URL = BASE_URL + "/images"
+RANDOM_URL = IMAGES_URL + "/random"
+GENERATE_URL = BASE_URL + "/auto-image"
+SHIP_URL = GENERATE_URL + "/love-ship"
 
 
 class Fun:
@@ -26,6 +31,15 @@ class Fun:
             90: "How come you're not all over eachother already!? You're a perfect couple!",
             100: "This is how the gods meet their partners. It'd be a shame for mankind if you two don't get together."
         }
+
+    async def generate_ship(self, m1, m2):
+        body = json.dumps({"targetOne": m1.avatar_url, "targetTwo": m2.avatar_url})
+        headers = {'Authorization': self.bot.img_auth, 'Content-Type': 'application/json'}
+        resp = await self.bot.session.post(SHIP_URL, headers=headers, data=body)
+
+        f = discord.File(BytesIO(await resp.read()), "ship.png")
+        embed = discord.Embed().set_image(url="attachment://ship.png")
+        return embed, f
 
     async def make_embed(self, title, type_):
         resp = await self.bot.session.get(RANDOM_URL, params={'type': type_},
@@ -52,7 +66,10 @@ class Fun:
         random.seed(user1.id + user2.id)
         chance = random.randint(0, 100)
         comment = self.ship_comments[round(chance, -1)]
-        await ctx.send(f"Ship chance for `{user1.name}` and `{user2.name}`: {chance}%!\n{comment}")
+        embed, f = await self.generate_ship(user1, user2)
+        embed.title = f"Ship chance for {user1.name} and {user2.name}"
+        embed.description = f"{chance}%!\n{comment}"
+        await ctx.send(embed=embed, file=f)
 
     @ship.error
     async def rand_error(self, ctx, err):
