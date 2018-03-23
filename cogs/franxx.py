@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 import discord
 import pytz
 from discord.ext import commands
+from discord.ext.commands import cooldown
+from discord.ext.commands.cooldowns import BucketType
 from googletrans import Translator
 
 
@@ -57,6 +59,7 @@ class FranXX:
             time = str(days) + fmt
         return time
 
+    @cooldown(1, 120, BucketType.channel)
     @commands.command(aliases=["episode", "nextepisode", "airtime"])
     async def next(self, ctx):
         """Countdown to next episode of the anime."""
@@ -85,12 +88,18 @@ class FranXX:
             await new.channel.send("Translated:", embed=embed)
 
     async def on_member_join(self, member):
+        if member.guild != self.greet_channel.guild:
+            return
+
         await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
                                       "Only those who read <#391490980249075722> can ride Strelizia with me.\n"
                                       "Proceed to there to collect your roles as well!")
         await self.greet_log.send(f"\N{WHITE HEAVY CHECK MARK} {member.mention} has joined the server.")
 
     async def on_member_remove(self, member):
+        if member.guild != self.greet_channel.guild:
+            return
+
         await self.greet_channel.send(f"Begone, *THOT!* {member.mention} has left the server!")
         await self.greet_log.send(f"\N{CROSS MARK} {member.mention} has left the server.")
 
