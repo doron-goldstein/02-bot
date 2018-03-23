@@ -3,7 +3,6 @@ import json
 import asyncio
 from datetime import datetime
 import discord
-from discord.ext import commands
 from discord.ext.commands import command
 
 
@@ -38,25 +37,6 @@ class Moderation:
             r_id = self.bot.muted_roles[channel.guild.id]
             role = discord.utils.get(channel.guild.roles, id=r_id)
             await channel.set_permissions(role, send_messages=False)
-
-    async def on_command_error(self, ctx, err):
-        if hasattr(ctx.command, 'on_error'):
-            return
-
-        if isinstance(err, commands.CommandNotFound):
-            return
-
-        elif isinstance(err, commands.BadArgument):
-            await ctx.send(f"Incorrect usage. Try `{ctx.prefix}help {ctx.command}` for more info.")
-
-        elif isinstance(err, commands.NoPrivateMessage):
-            await ctx.send(f"This command cannot be used in DMs.")
-
-        elif isinstance(err, commands.CommandOnCooldown):
-            await ctx.send(err.args[0], delete_after=5)
-
-        else:
-            raise err
 
     @command(hidden=True)
     async def lock(self, ctx):

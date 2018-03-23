@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 from ruamel.yaml import YAML
 
-startup_extensions = ["fun", "moderation", "admin", "franxx", "logger", "roles"]
+startup_extensions = ["fun", "moderation", "admin", "franxx", "logger", "roles", "errors"]
 extensions = ["cogs." + ext for ext in startup_extensions]
 yaml = YAML()
 try:
