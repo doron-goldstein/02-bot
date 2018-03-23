@@ -19,12 +19,6 @@ class Logger:
         embed.add_field(name="Channel", value=message.channel.mention)
         if message.content:
             embed.add_field(name="Content", value=message.content, inline=False)
-        # if message.attachments and new_msg is None:
-            # await message.attachments[0].save("img.png")  # this is a 403 for some reason
-            # embed.set_image(url="attachment://img.png")
-            # f = discord.File("img.png")
-            # if len(message.attachments) > 1:
-                # embed.add_field(name="Attachments", value="\n".join(a.url for a in message.attachments[1:]))  # noqa
         if action == "edit":
             embed.add_field(name="Edited Content", value=new_msg.content, inline=False)
         await self.log_chan.send("\n".join(a.url for a in message.attachments), embed=embed, file=f)  # we have to just output the attachments  # noqa
