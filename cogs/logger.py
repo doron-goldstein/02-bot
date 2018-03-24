@@ -4,7 +4,8 @@ import discord
 class Logger:
     def __init__(self, bot):
         self.bot = bot
-        self.log_chan = bot.get_channel(413889551740960790)
+        self.edit_chan = bot.get_channel(413889551740960790)
+        self.del_chan = bot.get_channel(427178643983433740)
         self.colors = {
             "edit": discord.Color.teal(),
             "delete": discord.Color.dark_red()
@@ -21,7 +22,9 @@ class Logger:
             embed.add_field(name="Content", value=message.content, inline=False)
         if action == "edit":
             embed.add_field(name="Edited Content", value=new_msg.content, inline=False)
-        await self.log_chan.send("\n".join(a.url for a in message.attachments), embed=embed, file=f)  # we have to just output the attachments  # noqa
+
+        channel = self.edit_chan if action == "edit" else self.del_chan
+        await channel.send("\n".join(a.url for a in message.attachments), embed=embed, file=f)  # we have to just output the attachments  # noqa
 
     async def on_message_delete(self, message):
         if message.guild == self.log_chan.guild:
