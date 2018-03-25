@@ -27,10 +27,14 @@ class Logger:
         await channel.send("\n".join(a.url for a in message.attachments), embed=embed, file=f)  # we have to just output the attachments  # noqa
 
     async def on_message_delete(self, message):
+        if message.author.bot:
+            return
         if message.guild == self.edit_chan.guild:
             await self.log_message("delete", message)
 
     async def on_message_edit(self, old, new):
+        if old.author.bot:
+            return
         if old.content != new.content:
             if old.guild == self.del_chan.guild:
                 await self.log_message("edit", old, new)
