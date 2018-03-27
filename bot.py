@@ -54,11 +54,15 @@ class ZeroTwo(commands.Bot):
         if self.session is None:
             self.session = aiohttp.ClientSession()
 
-        query = """
+        mute_query = """
             SELECT * FROM mute
         """
-        self.muted_roles = {g: r for g, r in await self.pool.fetch(query)}
-
+        role_query = """
+            SELECT * FROM roles
+        """
+        async with self.pool.acquire() as conn:
+            self.muted_roles = {g: r for g, r in await conn.fetch(mute_query)}
+            self.reaction_manager = {e: r for e, r in await conn.fetch(role_query)}
         print("Ready!")
         print(self.user.name)
         print(self.user.id)
