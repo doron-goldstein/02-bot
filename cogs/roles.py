@@ -7,6 +7,7 @@ class Roles:
         self.bot = bot
         self.channel_id = 391490980249075722
         self.msg_id = 417823406617001987
+        self.emoji_server_id = 417804713413836830
         # self.reaction_manager = {
         #     'SeXX': 407759891927924737,
         #     '02bounce': 402315991918575636,
@@ -23,26 +24,41 @@ class Roles:
         #     'terraria': 424639819852021763
         # }
 
-    @commands.has_permissions(manage_roles=True)
+    async def cmdcheck(ctx):
+        return ctx.author.id == 111158853839654912
+
+    @commands.check(cmdcheck)
     @commands.command(hidden=True)
-    async def addrole(self, ctx, role: discord.Role, emoji: discord.Emoji):
+    async def addrole(self, ctx, role: discord.Role, emoji_name, url=None):
         """Adds a new role to the reaction role manager."""
+
         c = self.bot.get_channel(self.channel_id)
         msg = await c.get_message(self.msg_id)
 
-        if emoji.name in self.bot.reaction_manager:
+        if emoji_name in self.bot.reaction_manager:
             return await ctx.send("Role has already been added!")
-
         if len(msg.reactions) == 20:
             return await ctx.send("Cannot add role! Too many roles exist. [Reaction reached 20 Emoji]")
 
+        if url is None:
+            if len(ctx.message.attachments) > 0:
+                url = ctx.message.attachments[0].url
+        resp = await self.bot.session.get(url)
+        img = await resp.read()
+
+        try:
+            guild = self.bot.get_guild(self.emoji_server_id)
+            emoji = await guild.create_custom_emoji(name=emoji_name, image=img)
+        except:  # noqa
+            return await ctx.send("Could not create emoji!")
+
         await msg.add_reaction(emoji)
-        self.bot.reaction_manager[emoji.name] = role.id
+        self.bot.reaction_manager[emoji_name] = role.id
 
         query = """
             INSERT INTO roles (emoji_name, role_id) VALUES ($1, $2)
         """
-        await self.bot.pool.execute(query, emoji.name, role.id)
+        await self.bot.pool.execute(query, emoji_name, role.id)
 
     async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
         guild = self.bot.get_channel(channel_id).guild
