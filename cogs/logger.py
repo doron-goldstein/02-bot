@@ -29,7 +29,7 @@ class Logger:
     async def on_message_delete(self, message):
         if message.author.bot:
             return
-        ctx = self.bot.get_context(message)
+        ctx = await self.bot.get_context(message)
         if message.guild == self.edit_chan.guild:
             await self.log_message("delete", message)
         if ctx.command:
