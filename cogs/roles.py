@@ -25,7 +25,7 @@ class Roles:
         # }
 
     async def cmdcheck(ctx):
-        return ctx.author.id == 111158853839654912
+        return ctx.author.id == 111158853839654912 or ctx.author.guild_permissions.manage_roles
 
     @commands.check(cmdcheck)
     @commands.command(hidden=True)
