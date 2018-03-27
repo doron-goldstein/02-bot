@@ -59,6 +59,7 @@ class Roles:
             INSERT INTO roles (emoji_name, role_id) VALUES ($1, $2)
         """
         await self.bot.pool.execute(query, emoji_name, role.id)
+        await ctx.send(f"Added `{emoji_name}` as an assignable role!")
 
     async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
         guild = self.bot.get_channel(channel_id).guild
