@@ -80,8 +80,6 @@ class FranXX:
         return res.text
 
     async def on_message_edit(self, old, new):
-        if self.bot.do_welcome:
-            return
         if new.author == new.guild.me:
             return
         if new.channel.id == 392840122158022656:
@@ -90,21 +88,21 @@ class FranXX:
             await new.channel.send("Translated:", embed=embed)
 
     async def on_member_join(self, member):
-        if self.bot.do_welcome:
-            return
         if member.guild != self.greet_channel.guild:
             return
 
-        await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
-                                      "Only those who read <#391490980249075722> can ride Strelizia with me.\n"
-                                      "Proceed to there to collect your roles as well!")
+        if self.bot.do_welcome:
+            await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
+                                          "Only those who read <#391490980249075722> can ride Strelizia with me.\n"
+                                          "Proceed to there to collect your roles as well!")
         await self.greet_log.send(f"\N{WHITE HEAVY CHECK MARK} {member.mention} has joined the server.")
 
     async def on_member_remove(self, member):
         if member.guild != self.greet_channel.guild:
             return
 
-        await self.greet_channel.send(f"Begone, *THOT!* {member.mention} has left the server!")
+        if self.bot.do_welcome:
+            await self.greet_channel.send(f"Begone, *THOT!* {member.mention} has left the server!")
         await self.greet_log.send(f"\N{CROSS MARK} {member.mention} has left the server.")
 
 
