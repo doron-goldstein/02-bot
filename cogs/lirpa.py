@@ -29,7 +29,7 @@ class Roles:
     async def pentecost(self, ctx):
         await ctx.send("""```One: don't you ever ping me again.
 
-Two: don't you ever touch me again.
+Two: don't you ever ping me again.
 
 Now you have no idea who the hell I am, of which anime Discord I've come from, and I'm not about to tell you my extensive list of nicknames. All I need to be to you and every Ranger on this Discord is a ban hammer. The last mod standing. I do not need your >pat or your >sync. All I need is you to read rules and your discussion skills. And if I can't get that, then you can go back to the DarliFranXX Discord where I found you crawling on. Do I make myself clear? Good.```""")
 
