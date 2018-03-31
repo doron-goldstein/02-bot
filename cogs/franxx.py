@@ -80,7 +80,7 @@ class FranXX:
         return res.text
 
     async def on_message_edit(self, old, new):
-        if not self.bot.do_welcome:
+        if self.bot.do_welcome:
             return
         if new.author == new.guild.me:
             return
@@ -90,7 +90,7 @@ class FranXX:
             await new.channel.send("Translated:", embed=embed)
 
     async def on_member_join(self, member):
-        if not self.bot.do_welcome:
+        if self.bot.do_welcome:
             return
         if member.guild != self.greet_channel.guild:
             return
