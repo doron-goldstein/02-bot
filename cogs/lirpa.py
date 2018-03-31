@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 
 
 class Roles:
@@ -29,7 +30,7 @@ class Roles:
         if message_id != self.msg_id:
             return
 
-        role = discord.utils.get(guild.roles, id=self.bot.reaction_manager[emoji.name])
+        role = discord.utils.get(guild.roles, id=self.reaction_manager[emoji.name])
         if role in member.roles:
             return
 
@@ -41,7 +42,7 @@ class Roles:
         if message_id != self.msg_id:
             return
 
-        role = discord.utils.get(guild.roles, id=self.bot.reaction_manager[emoji.name])
+        role = discord.utils.get(guild.roles, id=self.reaction_manager[emoji.name])
         if role not in member.roles:
             return
 
