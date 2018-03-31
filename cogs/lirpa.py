@@ -26,6 +26,11 @@ class Roles:
 
     @commands.has_permissions(kick_members=True, ban_members=True)
     @commands.command()
+    async def togglewelcome(self, ctx):
+        self.bot.do_welcome = False
+
+    @commands.has_permissions(kick_members=True, ban_members=True)
+    @commands.command()
     async def pentecost(self, ctx):
         await ctx.send("""```One: don't you ever ping me again.
 

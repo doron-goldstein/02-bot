@@ -38,6 +38,7 @@ class ZeroTwo(commands.Bot):
                          description="Zero Two Bot for the Darling in the FranXX server",
                          activity=game)
         self.img_auth = "Wolke " + img_auth
+        self.do_welcome = True
         self.pool = None
         self.session = None
 
