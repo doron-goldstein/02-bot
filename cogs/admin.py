@@ -44,7 +44,7 @@ class Admin:
         env.update(globals())
 
         code = code.strip("`")
-        code = code.lstrip("py\n")
+        code = code.replace("py\n")
         fmt = "async def e():\n"
         fmt += "\n".join(["    " + ln for ln in code.split("\n")])
         out = StringIO()
