@@ -39,7 +39,8 @@ class Admin:
             "channel": ctx.channel,
             "guild": ctx.guild,
             "author": ctx.author,
-            "bot": ctx.bot
+            "bot": ctx.bot,
+            "history": await ctx.history().flatten()
         }
         env.update(globals())
 
