@@ -154,7 +154,7 @@ class Fun:
         embed = await self.make_embed(f"{ctx.author.name} cuddled {user.name}!", 'cuddle')
         await ctx.send(embed=embed)
 
-    @command()
+    @command(hidden=True)
     async def age(self, ctx, member: discord.Member):
         await ctx.send(discord.utils.snowflake_time(member.id))
 
