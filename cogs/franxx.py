@@ -65,7 +65,7 @@ class FranXX:
         """Countdown to next episode of the anime."""
         air_time = self.get_formatted_time("Saturday", hour=23, minute=30)
         crunchy = self.get_formatted_time("Saturday", hour=23, minute=30, delta=1.5)
-        preview = self.get_formatted_time("Thursday", hour=18, minute=0,)
+        preview = self.get_formatted_time("Thursday", hour=18, minute=0)
 
         embed = discord.Embed(title="Darling in the FranXX", color=0x0066CC)
         embed.add_field(name="Air Time", value=air_time, inline=False)
@@ -102,8 +102,8 @@ class FranXX:
             return
 
         if self.bot.do_welcome:
-            await self.greet_channel.send(f"Begone, *THOT!* {member.mention} has left the server!")
-        await self.greet_log.send(f"\N{CROSS MARK} {member.mention} has left the server.")
+            await self.greet_channel.send(f"Begone, *THOT!* {member} has left the server!")
+        await self.greet_log.send(f"\N{CROSS MARK} {member.mention} ({member} / {member.id}) has left the server.")
 
 
 def setup(bot):
