@@ -155,6 +155,10 @@ class Fun:
         await ctx.send(embed=embed)
 
     @command()
+    async def age(self, ctx, member: discord.Member):
+        await ctx.send(discord.utils.snowflake_time(member.id))
+
+    @command()
     async def saturday(self, ctx):
         """Saturday?"""
 
