@@ -102,7 +102,7 @@ class FranXX:
             return
 
         if self.bot.do_welcome:
-            await self.greet_channel.send(f"Begone, *THOT!* {member} has left the server!")
+            await self.greet_channel.send(f"Begone, *THOT!*  `{member}` has left the server!")
         await self.greet_log.send(f"\N{CROSS MARK} {member.mention} ({member} / {member.id}) has left the server.")
 
 
