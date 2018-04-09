@@ -4,7 +4,7 @@ from io import BytesIO
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import command
+from discord.ext.commands import command, UserConverter, BadArgument
 
 from utils.checks import restricted
 
@@ -154,9 +154,20 @@ class Fun:
         embed = await self.make_embed(f"{ctx.author.name} cuddled {user.name}!", 'cuddle')
         await ctx.send(embed=embed)
 
+    class UserCreated(UserConverter):
+        def convert(self, ctx, arg):
+            try:
+                u = super().convert()
+                return discord.utils.snowflake_time(u.id)
+            except BadArgument:
+                if isinstance(arg, int) or arg.isdigit():
+                    return discord.utils.snowflake_time(arg)
+                else:
+                    raise BadArgument("Can only convert ID numbers.")
+
     @command(hidden=True)
-    async def age(self, ctx, user: discord.User):
-        await ctx.send(discord.utils.snowflake_time(user.id))
+    async def age(self, ctx, created: UserCreated):
+        await ctx.send(created)
 
     @command()
     async def saturday(self, ctx):
