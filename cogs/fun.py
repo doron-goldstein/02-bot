@@ -157,7 +157,7 @@ class Fun:
     class UserCreated(UserConverter):
         async def convert(self, ctx, arg):
             try:
-                u = super().convert(ctx, arg)
+                u = await super().convert(ctx, arg)
                 return discord.utils.snowflake_time(u.id)
             except BadArgument:
                 if isinstance(arg, int) or arg.isdigit():
