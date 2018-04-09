@@ -156,13 +156,12 @@ class Fun:
 
     class UserCreated(UserConverter):
         async def convert(self, ctx, arg):
-            arg = str(arg)
             try:
-                u = await super().convert(ctx, arg)
+                u = await super().convert(ctx, str(arg))
                 return discord.utils.snowflake_time(u.id)
             except BadArgument:
                 if isinstance(arg, int) or arg.isdigit():
-                    return discord.utils.snowflake_time(arg)
+                    return discord.utils.snowflake_time(int(arg))
                 else:
                     raise BadArgument("Can only convert ID numbers.")
 
