@@ -155,7 +155,7 @@ class Fun:
         await ctx.send(embed=embed)
 
     class UserCreated(UserConverter):
-        def convert(self, ctx, arg):
+        async def convert(self, ctx, arg):
             try:
                 u = super().convert()
                 return discord.utils.snowflake_time(u.id)
