@@ -156,6 +156,7 @@ class Fun:
 
     class UserCreated(UserConverter):
         async def convert(self, ctx, arg):
+            arg = str(arg)
             try:
                 u = await super().convert(ctx, arg)
                 return discord.utils.snowflake_time(u.id)
