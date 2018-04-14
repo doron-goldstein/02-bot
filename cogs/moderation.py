@@ -65,7 +65,7 @@ class Moderation:
                     await ctx.invoke(self.bot.get_command("unmute"), message.author,
                                      reason="5 minutes have passed. Please refrain from spamming.")
 
-    @command(hidden=True)
+    @command(hidden=True)  # this is actually horrid
     async def config(self, ctx):
         fmt = "Enter config number to toggle the value, or `x` to cancel:"
         config_index = {}
@@ -79,7 +79,7 @@ class Moderation:
         fmt += "```"
         for i, key in enumerate(config):
             fmt += f"\n{i+1}. [{key}] : {config[key]}"
-            config_index[i] = key
+            config_index[i+1] = key
         fmt += "```"
         await ctx.send(fmt)
         try:
@@ -91,6 +91,10 @@ class Moderation:
             return await ctx.send("Timeout.")
         if msg.content.lower() != 'x':
             config[config_index[int(msg.content)]] = not config[config_index[int(msg.content)]]
+            query = """
+                UPDATE config SET $1 = $2 WHERE guild_id = $3
+            """
+            await self.bot.pool.execute(query, config_index[int(msg.content)], config[config_index[int(msg.content)]], ctx.guild.id)
             await ctx.send(config_index[int(msg.content)] + " toggled.")
 
     @command(hidden=True)
