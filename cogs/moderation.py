@@ -17,12 +17,19 @@ class Moderation:
             "mute": 0xa52a2a,
             "unmute": 0x73dcff
         }
+        self.converter = {
+            "kick": "ed",
+            "mute": "d",
+            "ban": "ned",
+            "warn": "ed",
+            "unmute": "d"
+        }
 
     async def __local_check(self, ctx):
         perms = ctx.author.guild_permissions
         return perms.kick_members and perms.ban_members
 
-    async def log_action(self, action, *, member, reason=None, mod=None):
+    async def log_action(self, ctx, action, *, member, reason=None, mod=None):
         embed = discord.Embed(title=f"Member {action}", description=reason)
         embed.color = self.embed_colors[action]
         embed.timestamp = datetime.now()
@@ -31,6 +38,8 @@ class Moderation:
         embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
         if member.guild.id == 391483719803994113:
             await self.log_chan.send(embed=embed)
+        action += self.converter[action]
+        await ctx.send(f"`{member}` has been {action} by {mod}.")
 
     async def on_guild_channel_create(self, channel):
         if channel.guild.id in self.bot.muted_roles:
@@ -92,13 +101,13 @@ class Moderation:
     async def kick(self, ctx, target: discord.Member, *, reason=None):
         await ctx.message.delete()
         await target.kick(reason=f"{ctx.author.name}: {reason}")
-        await self.log_action("kick", member=target, reason=reason, mod=ctx.author)
+        await self.log_action(ctx, "kick", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
     async def ban(self, ctx, target: discord.Member, *, reason=None):
         await ctx.message.delete()
         await target.ban(reason=f"{ctx.author.name}: {reason}", delete_message_days=0)
-        await self.log_action("ban", member=target, reason=reason, mod=ctx.author)
+        await self.log_action(ctx, "ban", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True, aliases=['gag'])
     async def mute(self, ctx, target: discord.Member, *, reason=None):
@@ -133,7 +142,7 @@ class Moderation:
             except:  # noqa
                 pass
         else:
-            await self.log_action("mute", member=target, reason=reason, mod=ctx.author)
+            await self.log_action(ctx, "mute", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True, aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
@@ -161,7 +170,7 @@ class Moderation:
             except:  # noqa
                 pass
 
-        await self.log_action("unmute", member=target, reason=reason, mod=ctx.author)
+        await self.log_action(ctx, "unmute", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
     async def warn(self, ctx, target: discord.Member, *, warning=None):
@@ -179,7 +188,7 @@ class Moderation:
             except:  # noqa
                 pass
         else:
-            await self.log_action("warn", member=target, reason=warning, mod=ctx.author)
+            await self.log_action(ctx, "warn", member=target, reason=warning, mod=ctx.author)
 
     @command(hidden=True, aliases=['prune', 'p'])
     async def purge(self, ctx, count: int, *users: discord.Member):
