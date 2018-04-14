@@ -24,11 +24,6 @@ class Roles:
             'warframe': 428196015938732034
         }
 
-    @commands.has_permissions(kick_members=True, ban_members=True)
-    @commands.command()
-    async def togglewelcome(self, ctx):
-        self.bot.do_welcome = not self.bot.do_welcome
-        await ctx.send(f"Welcome status: {self.bot.do_welcome}")
 
     @commands.has_permissions(kick_members=True, ban_members=True)
     @commands.command()

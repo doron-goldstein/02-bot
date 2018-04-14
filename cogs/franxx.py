@@ -92,7 +92,7 @@ class FranXX:
         if member.guild != self.greet_channel.guild:
             return
 
-        if self.bot.do_welcome:
+        if self.bot.config[member.guild.id]['do_welcome']:
             m = await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
                                               "Only those who read <#391490980249075722> can ride Strelizia with me.\n"
                                               "Proceed to there to collect your roles as well!")
@@ -106,7 +106,7 @@ class FranXX:
         if member.guild != self.greet_channel.guild:
             return
 
-        if self.bot.do_welcome:
+        if self.bot.config[member.guild.id]['do_welcome']:
             await self.greet_channel.send(f"Begone, *THOT!*  `{member}` has left the server!")
         await self.greet_log.send(f"\N{CROSS MARK} {member.mention} ({member} / {member.id}) has left the server.")
 

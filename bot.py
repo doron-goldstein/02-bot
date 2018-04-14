@@ -38,7 +38,6 @@ class ZeroTwo(commands.Bot):
                          description="Zero Two Bot for the Darling in the FranXX server",
                          activity=game)
         self.img_auth = "Wolke " + img_auth
-        self.do_welcome = True
         self.pool = None
         self.session = None
 
@@ -61,9 +60,14 @@ class ZeroTwo(commands.Bot):
         role_query = """
             SELECT * FROM roles
         """
+        config_query = """
+            SELECT * FROM config
+        """
+
         async with self.pool.acquire() as conn:
             self.muted_roles = {g: r for g, r in await conn.fetch(mute_query)}
             self.reaction_manager = {e: r for e, r in await conn.fetch(role_query)}
+            self.config = {g: {'do_welcome': w, 'echo_mod_actions': m} for g, w, m in await conn.fetch(config_query)}
         print("Ready!")
         print(self.user.name)
         print(self.user.id)
