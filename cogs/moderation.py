@@ -1,7 +1,7 @@
 import json
 
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 import discord
 from discord.ext.commands import command
 
@@ -37,6 +37,20 @@ class Moderation:
             r_id = self.bot.muted_roles[channel.guild.id]
             role = discord.utils.get(channel.guild.roles, id=r_id)
             await channel.set_permissions(role, send_messages=False)
+
+    async def on_message(self, message):
+        if message.attachments:
+            past = datetime.utcnow() - timedelta(minutes=1)
+            channel = message.channel
+            c = 0
+            async for m in channel.history(after=past):
+                if m.attachments and m.author == message.author:
+                    c += 1
+                if c >= 4:
+                    ctx = await self.bot.get_context(message)
+                    ctx.author = ctx.guild.me
+                    return await ctx.invoke(self.bot.get_command("mute"), message.author,
+                                            reason="Image / file spamming")
 
     @command(hidden=True)
     async def lock(self, ctx):
