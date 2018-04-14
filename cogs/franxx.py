@@ -14,6 +14,7 @@ class FranXX:
         self.trans = Translator()
         self.greet_channel = bot.get_channel(391483720244264961)
         self.greet_log = bot.get_channel(392444419535667200)
+        self.welcome_emoji = discord.utils.get(bot.emojis, name="welcome")
 
     def get_next_weekday(self, startdate: datetime, day: str) -> datetime:
         """Get the next date per day of the week"""
@@ -92,9 +93,13 @@ class FranXX:
             return
 
         if self.bot.do_welcome:
-            await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
-                                          "Only those who read <#391490980249075722> can ride Strelizia with me.\n"
-                                          "Proceed to there to collect your roles as well!")
+            m = await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
+                                              "Only those who read <#391490980249075722> can ride Strelizia with me.\n"
+                                              "Proceed to there to collect your roles as well!")
+            try:
+                await m.add_reaction(self.welcome_emoji)
+            except:  # noqa
+                pass
         await self.greet_log.send(f"\N{WHITE HEAVY CHECK MARK} {member.mention} has joined the server.")
 
     async def on_member_remove(self, member):
