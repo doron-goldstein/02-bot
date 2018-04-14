@@ -92,9 +92,10 @@ class Moderation:
         if msg.content.lower() != 'x':
             config[config_index[int(msg.content)]] = not config[config_index[int(msg.content)]]
             query = """
-                UPDATE config SET $1 = $2 WHERE guild_id = $3
-            """
-            await self.bot.pool.execute(query, config_index[int(msg.content)], config[config_index[int(msg.content)]], ctx.guild.id)
+                UPDATE config
+                SET {} = {} WHERE guild_id = {}
+            """.format(config_index[int(msg.content)], config[config_index[int(msg.content)]], ctx.guild.id)
+            await self.bot.pool.execute(query)
             await ctx.send(config_index[int(msg.content)] + " toggled.")
 
     @command(hidden=True)
