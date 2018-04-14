@@ -61,25 +61,25 @@ class Roles:
         await self.bot.pool.execute(query, emoji_name, role.id)
         await ctx.send(f"Added `{emoji_name}` as an assignable role!")
 
-    async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
-        guild = self.bot.get_channel(channel_id).guild
-        member = guild.get_member(user_id)
-        if message_id != self.msg_id:
+    async def on_raw_reaction_add(self, event):
+        guild = self.bot.get_guild(event.guild_id)
+        member = guild.get_member(event.user_id)
+        if event.message_id != self.msg_id:
             return
 
-        role = discord.utils.get(guild.roles, id=self.bot.reaction_manager[emoji.name])
+        role = discord.utils.get(guild.roles, id=self.bot.reaction_manager[event.emoji.name])
         if role in member.roles:
             return
 
         await member.add_roles(role)
 
-    async def on_raw_reaction_remove(self, emoji, message_id, channel_id, user_id):
-        guild = self.bot.get_channel(channel_id).guild
-        member = guild.get_member(user_id)
-        if message_id != self.msg_id:
+    async def on_raw_reaction_remove(self, event):
+        guild = self.bot.get_guild(event.guild_id)
+        member = guild.get_member(event.user_id)
+        if event.message_id != self.msg_id:
             return
 
-        role = discord.utils.get(guild.roles, id=self.bot.reaction_manager[emoji.name])
+        role = discord.utils.get(guild.roles, id=self.bot.reaction_manager[event.emoji.name])
         if role not in member.roles:
             return
 
