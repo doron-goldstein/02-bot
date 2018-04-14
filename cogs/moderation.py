@@ -69,10 +69,18 @@ class Moderation:
     async def config(self, ctx):
         fmt = "Enter config number to toggle the value, or `x` to cancel:"
         config_index = {}
-        config = self.bot.config[ctx.guild.id]
+        try:
+            config = self.bot.config[ctx.guild.id]
+        except KeyError:
+            query = """
+                INSERT INTO config VALUES ($1, $2 ,$3)
+            """
+            await self.bot.pool.execute(query, ctx.guild.id, False, False)
+        fmt += "```"
         for i, key in enumerate(config):
-            fmt += f"{i+1}. `{key}` : {config[key]}"
+            fmt += f"\n{i+1}. [{key}] : {config[key]}"
             config_index[i] = key
+        fmt += "```"
         await ctx.send(fmt)
         try:
             def check(m):
