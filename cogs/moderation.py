@@ -90,7 +90,8 @@ class Moderation:
         except asyncio.TimeoutError:
             return await ctx.send("Timeout.")
         if msg.content.lower() != 'x':
-            config[config_index[int(msg)]] = not config[config_index[int(msg)]]
+            config[config_index[int(msg.content)]] = not config[config_index[int(msg.content)]]
+            await ctx.send(config_index[int(msg.content)] + " toggled.")
 
     @command(hidden=True)
     async def lock(self, ctx):
