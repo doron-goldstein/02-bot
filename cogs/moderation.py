@@ -165,7 +165,7 @@ class Moderation:
         if not m:
             m = self.bot.muted_members[target.id] = {'muted': False, 'mute_duration': "-1"}
         m['muted'] = True
-        await self.bot.redis.hset(f"member:{target.id}", "muted", "1")
+        await self.bot.redis.hmset_dict(f"member:{target.id}", m)
 
         fmt = f"You've been muted by {ctx.author}!"
         if reason:
@@ -198,7 +198,7 @@ class Moderation:
                 if not m:
                     m = self.bot.muted_members[target.id] = {'muted': False, 'mute_duration': "-1"}
                 m['muted'] = False
-                await self.bot.redis.hset(f"member:{target.id}", "muted", "0")
+                await self.bot.redis.hmset_dict(f"member:{target.id}", m)
 
         fmt = f"You've been unmuted by {ctx.author}!"
         if reason:
