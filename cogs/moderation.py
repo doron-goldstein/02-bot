@@ -165,7 +165,7 @@ class Moderation:
         if not m:
             m = self.bot.muted_members[target.id] = {}
         m['muted'] = True
-        await self.bot.redis.set("member:" + target.id, "muted", "1")
+        await self.bot.redis.set(f"member:{target.id}", "muted", "1")
 
         fmt = f"You've been muted by {ctx.author}!"
         if reason:
