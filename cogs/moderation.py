@@ -161,7 +161,9 @@ class Moderation:
 
         role = discord.utils.get(ctx.guild.roles, id=r_id)
         await target.add_roles(role)
-        m = self.bot.muted_members[target.id]
+        m = self.bot.muted_members.get(target.id)
+        if not m:
+            self.bot.muted_members[target.id] = {}
         m['muted'] = True
         await self.bot.redis.set("member:" + target.id, "muted", "1")
 
