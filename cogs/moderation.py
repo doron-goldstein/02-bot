@@ -164,7 +164,7 @@ class Moderation:
         m = self.bot.muted_members.get(target.id)
         if not m:
             m = self.bot.muted_members[target.id] = {'muted': '0', 'mute_duration': "-1"}
-        m['muted'] = '0'
+        m['muted'] = '1'
         await self.bot.redis.hmset_dict(f"member:{target.id}", m)
 
         fmt = f"You've been muted by {ctx.author}!"
