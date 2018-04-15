@@ -79,7 +79,7 @@ class Moderation:
         fmt += "```"
         for i, key in enumerate(config):
             fmt += f"\n{i+1}. [{key}] : {config[key]}"
-            config_index[i+1] = key
+            config_index[i + 1] = key
         fmt += "```"
         await ctx.send(fmt)
         try:
