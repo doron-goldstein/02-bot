@@ -194,6 +194,11 @@ class Moderation:
             role = discord.utils.get(ctx.guild.roles, id=r_id)
             if role:
                 await target.remove_roles(role)
+                m = self.bot.muted_members.get(target.id)
+                if not m:
+                    m = self.bot.muted_members[target.id] = {}
+                m['muted'] = False
+                await self.bot.redis.hset(f"member:{target.id}", "muted", "0")
 
         fmt = f"You've been unmuted by {ctx.author}!"
         if reason:
