@@ -163,8 +163,8 @@ class Moderation:
         await target.add_roles(role)
         m = self.bot.muted_members.get(target.id)
         if not m:
-            m = self.bot.muted_members[target.id] = {'muted': False, 'mute_duration': "-1"}
-        m['muted'] = True
+            m = self.bot.muted_members[target.id] = {'muted': '0', 'mute_duration': "-1"}
+        m['muted'] = '0'
         await self.bot.redis.hmset_dict(f"member:{target.id}", m)
 
         fmt = f"You've been muted by {ctx.author}!"
@@ -196,8 +196,8 @@ class Moderation:
                 await target.remove_roles(role)
                 m = self.bot.muted_members.get(target.id)
                 if not m:
-                    m = self.bot.muted_members[target.id] = {'muted': False, 'mute_duration': "-1"}
-                m['muted'] = False
+                    m = self.bot.muted_members[target.id] = {'muted': '0', 'mute_duration': "-1"}
+                m['muted'] = '0'
                 await self.bot.redis.hmset_dict(f"member:{target.id}", m)
 
         fmt = f"You've been unmuted by {ctx.author}!"
