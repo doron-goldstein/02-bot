@@ -3,6 +3,7 @@ import os
 import ssl
 
 import aiohttp
+import aioredis
 import asyncpg
 import discord
 from discord.ext import commands
@@ -16,11 +17,13 @@ try:
         config = yaml.load(f)
         token = config["token"]
         db = config["db"]
+        redis = (config["redis_addr"], config["redis_pw"])
         img_auth = config["img_auth"]
         dev = True
 except:  # noqa
     token = os.environ.get("TOKEN")
     db = os.environ.get("DATABASE_URL")
+    redis = (os.environ.get("REDIS_ADDR"), os.environ.get("REDIS_PW"))
     img_auth = os.environ.get("WOLKE_TOKEN")
     dev = False
 
@@ -39,6 +42,7 @@ class ZeroTwo(commands.Bot):
                          activity=game)
         self.img_auth = "Wolke " + img_auth
         self.pool = None
+        self.redis = None
         self.session = None
 
     async def close(self):
@@ -50,6 +54,9 @@ class ZeroTwo(commands.Bot):
     async def on_ready(self):
         if self.pool is None:
             self.pool = await asyncpg.create_pool(db, ssl=ssl.SSLContext(), loop=self.loop)
+
+        if self.redis is None:
+            self.redis = await aioredis.create_redis_pool(redis[0], password=redis[1])
 
         if self.session is None:
             self.session = aiohttp.ClientSession()
@@ -68,6 +75,12 @@ class ZeroTwo(commands.Bot):
             self.muted_roles = {g: r for g, r in await conn.fetch(mute_query)}
             self.reaction_manager = {e: r for e, r in await conn.fetch(role_query)}
             self.config = {g: {'do_welcome': w, 'echo_mod_actions': m} for g, w, m in await conn.fetch(config_query)}
+            self.muted_members = {}
+            async for key in self.redis.iscan(match="member:*"):
+                d = await self.redis.hgetall(key)
+                d = {k: bool(int(v)) if v != "-1" else None for k, v in d}
+                self.muted_members[key.replace("member:", "")] = d
+
         print("Ready!")
         print(self.user.name)
         print(self.user.id)
