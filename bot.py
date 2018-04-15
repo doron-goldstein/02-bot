@@ -78,7 +78,7 @@ class ZeroTwo(commands.Bot):
             self.muted_members = {}
             async for key in self.redis.iscan(match="member:*"):
                 d = await self.redis.hgetall(key)
-                d = {k: int(v) if v != "-1" else None for k, v in d}
+                # d = {k: int(v) if v != "-1" else None for k, v in d}
                 self.muted_members[key.replace("member:", "")] = d
 
         print("Ready!")
