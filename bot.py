@@ -56,7 +56,7 @@ class ZeroTwo(commands.Bot):
             self.pool = await asyncpg.create_pool(db, ssl=ssl.SSLContext(), loop=self.loop)
 
         if self.redis is None:
-            self.redis = await aioredis.create_redis_pool(redis[0], password=redis[1])
+            self.redis = await aioredis.create_redis_pool("redis://" + redis[0], password=redis[1])
 
         if self.session is None:
             self.session = aiohttp.ClientSession()
