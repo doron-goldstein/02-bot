@@ -78,7 +78,7 @@ class ZeroTwo(commands.Bot):
             self.muted_members = {}
             async for key in self.redis.iscan(match="member:*"):
                 d = await self.redis.hgetall(key)
-                d = {str(k): str(v) for k, v in d.items()}
+                d = {k.decode('utf-8'): v.decode('utf-8') for k, v in d.items()}
                 self.muted_members[int(key.decode('utf-8').replace("member:", ""))] = d
 
         print("Ready!")
