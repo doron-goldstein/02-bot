@@ -1,10 +1,11 @@
 import json
+import os
 import random
 from io import BytesIO
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import command, UserConverter, BadArgument
+from discord.ext.commands import BadArgument, UserConverter, command
 
 from utils.checks import restricted
 
@@ -18,6 +19,7 @@ SHIP_URL = GENERATE_URL + "/love-ship"
 class Fun:
     def __init__(self, bot):
         self.bot = bot
+        self.feedback_channel = os.environ['FEEDBACK_CHANNEL']
         self.ship_comments = {
             0: "These two?? Together?! Don't make me laugh, Darling...",
             10: "Not gonna happen...",
@@ -164,6 +166,15 @@ class Fun:
                     return discord.utils.snowflake_time(int(arg))
                 else:
                     raise BadArgument("Can only convert ID numbers.")
+
+    @command()
+    async def feedback(self, ctx, * msg):
+        """Send me (Synder#0690) feedback about the bot!
+        bugs, feature requests, and any general feedback at all!
+        """
+        embed = discord.Embed(title="Feedback recieved", description=msg) \
+            .set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        await self.feedback_channel.send(embed=embed)
 
     @command(hidden=True)
     async def age(self, ctx, created: UserCreated):
