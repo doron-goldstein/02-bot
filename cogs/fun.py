@@ -168,7 +168,7 @@ class Fun:
                     raise BadArgument("Can only convert ID numbers.")
 
     @command()
-    async def feedback(self, ctx, * msg):
+    async def feedback(self, ctx, *, msg):
         """Send me (Synder#0690) feedback about the bot!
         bugs, feature requests, and any general feedback at all!
         """
