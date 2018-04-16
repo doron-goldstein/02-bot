@@ -92,6 +92,12 @@ class FranXX:
         if member.guild != self.greet_channel.guild:
             return
 
+        state = self.bot.muted_members.get(member.id)
+        if state:
+            if state.get('muted'):
+                r_id = self.bot.muted_roles.get(member.guild.id)
+                await member.add_roles(discord.utils.get(member.guild.roles, id=r_id))
+
         if self.bot.config[member.guild.id]['do_welcome']:
             m = await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
                                               "Only those who read <#391490980249075722> can ride Strelizia with me.\n"
