@@ -21,6 +21,9 @@ class Errors:
         elif isinstance(err, commands.CommandOnCooldown):
             await ctx.send(err.args[0], delete_after=5)
 
+        elif isinstance(err, commands.MissingRequiredArgument):
+            await ctx.send(err.args[0])
+
         else:
             raise err
 
