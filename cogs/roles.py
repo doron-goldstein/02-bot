@@ -5,8 +5,8 @@ from discord.ext import commands
 class Roles:
     def __init__(self, bot):
         self.bot = bot
-        self.channel_id = 391490980249075722
-        self.msg_id = 417823406617001987
+        self.channel_id = 434836251766423564
+        self.msg_id = 434842027692130304
         self.emoji_server_id = 417804713413836830
         # self.reaction_manager = {
         #     'SeXX': 407759891927924737,
