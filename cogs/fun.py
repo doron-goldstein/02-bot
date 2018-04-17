@@ -19,7 +19,7 @@ SHIP_URL = GENERATE_URL + "/love-ship"
 class Fun:
     def __init__(self, bot):
         self.bot = bot
-        self.feedback_channel = bot.get_channel(int(os.environ.get('FEEDBACK_CHANNEL') or bot._config['feedback_channel']))
+        self.feedback_channel = bot.get_channel(int(os.environ.get('FEEDBACK_CHANNEL') or bot._config['feedback_channel']))  # noqa: E501
         self.ship_comments = {
             0: "These two?? Together?! Don't make me laugh, Darling...",
             10: "Not gonna happen...",
