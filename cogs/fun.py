@@ -212,13 +212,16 @@ class Fun:
 
         return message
 
-    @command(aliases=["makechain", "channelchain", "scramble"])
+    @command(aliases=["makechain", "channelchain", "makemessage"])
     @cooldown(1, 120, BucketType.channel)
-    async def makemessage(self, ctx, channel: discord.TextChannel = None):
+    async def scramble(self, ctx, channel: discord.TextChannel = None):
+        """Generates a message based on the last 1000 messages in a specified channel
+        (or the current one if none was given).
+        """
         channel = channel or ctx.channel
         async with ctx.typing():
             msgs = [m.clean_content async for m in channel.history(limit=1000)]
-            msg = await self.bot.loop.run_in_executor(None, self.generate_message, "\n\n".join(msgs))
+            msg = await self.bot.loop.run_in_executor(None, self.generate_message, "\n".join(msgs))
         if len(msg) >= 2000:
             await ctx.send("Result was too large! Posting a part of it.")
             msg = msg[:2000]
