@@ -221,7 +221,7 @@ class Fun:
         channel = channel or ctx.channel
         async with ctx.typing():
             msgs = [m.clean_content async for m in channel.history(limit=1000)]
-            msg = await self.bot.loop.run_in_executor(None, self.generate_message, "\n".join(msgs))
+            msg = await self.bot.loop.run_in_executor(None, self.generate_message, " ".join(msgs))
         if len(msg) >= 2000:
             await ctx.send("Result was too large! Posting a part of it.")
             msg = msg[:2000]
