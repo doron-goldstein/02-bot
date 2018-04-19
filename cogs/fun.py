@@ -5,9 +5,9 @@ from io import BytesIO
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import BadArgument, UserConverter, command, cooldown, BucketType
+from discord.ext.commands import BadArgument, UserConverter, command
 
-from utils.checks import restricted
+from utils.checks import restricted, super_check, mods_only
 
 BASE_URL = "https://api.weeb.sh"
 IMAGES_URL = BASE_URL + "/images"
@@ -213,7 +213,7 @@ class Fun:
         return message
 
     @command(aliases=["makechain", "channelchain", "makemessage"])
-    @cooldown(1, 120, BucketType.channel)
+    @super_check(mods_only)
     async def scramble(self, ctx, channel: discord.TextChannel = None):
         """Generates a message based on the last 1000 messages in a specified channel
         (or the current one if none was given).

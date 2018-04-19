@@ -24,6 +24,9 @@ class Errors:
         elif isinstance(err, commands.MissingRequiredArgument):
             await ctx.send(err.args[0])
 
+        elif isinstance(err, commands.CheckFailure):
+            return
+
         else:
             raise err
 

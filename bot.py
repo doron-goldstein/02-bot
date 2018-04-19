@@ -41,6 +41,7 @@ class ZeroTwo(commands.Bot):
         super().__init__(command_prefix=get_prefix,
                          description="Zero Two Bot for the Darling in the FranXX server",
                          activity=game)
+        self.owner_id = 111158853839654912
         self._config = config
         self.img_auth = "Wolke " + img_auth
         self.pool = None
