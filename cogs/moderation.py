@@ -176,7 +176,7 @@ class Moderation:
         except:  # noqa
             try:
                 await ctx.author.send(f"Could not send mute notice to `{target}`.\n"
-                                      "They may have DMs disables, or have blocked me.\n\n"
+                                      "They may have DMs disabled, or have blocked me.\n\n"
                                       f"Mute Reason:\n{reason}")
             except:  # noqa
                 pass
@@ -209,7 +209,7 @@ class Moderation:
         except:  # noqa
             try:
                 await ctx.author.send(f"Could not send unmute notice to `{target}`.\n"
-                                      "They may have DMs disables, or have blocked me.\n\n"
+                                      "They may have DMs disabled, or have blocked me.\n\n"
                                       f"Unmute Reason:\n{reason}")
             except:  # noqa
                 pass
@@ -227,7 +227,7 @@ class Moderation:
         except:  # noqa
             try:
                 await ctx.author.send(f"Could not send a warning to `{target}`.\n"
-                                      "They may have DMs disables, or have blocked me.\n\n"
+                                      "They may have DMs disabled, or have blocked me.\n\n"
                                       f"Warning text was:\n{warning}")
             except:  # noqa
                 pass
