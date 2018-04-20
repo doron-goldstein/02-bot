@@ -173,7 +173,7 @@ class Moderation:
                     muter_id = $4
             RETURNING *
         """
-        rec = await self.bot.pool.execute(query, target.id, ctx.guild.id, timeout, ctx.author.id)
+        rec = await self.bot.pool.fetchrow(query, target.id, ctx.guild.id, timeout, ctx.author.id)
         self.bot.muted_members[target.id] = dict(rec)
 
         fmt = f"You've been muted by {ctx.author}!"
@@ -210,7 +210,7 @@ class Moderation:
                         WHERE guild_id = $1 AND member_id = $2
                     RETURNING *
                 """
-                rec = await self.bot.pool.execute(query, ctx.guild.id, target.id)
+                rec = await self.bot.pool.fetchrow(query, ctx.guild.id, target.id)
                 self.bot.muted_members[target.id] = dict(rec)
 
         fmt = f"You've been unmuted by {ctx.author}!"
