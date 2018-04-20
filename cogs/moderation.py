@@ -145,7 +145,7 @@ class Moderation:
         await self.log_action(ctx, "ban", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True, aliases=['gag'])
-    async def mute(self, ctx, target: discord.Member, *, reason=None):
+    async def mute(self, ctx, minutes: int, target: discord.Member, *, reason=None):
         await ctx.message.delete()
         r_id = self.bot.muted_roles.get(ctx.guild.id)
         if not r_id:
@@ -162,11 +162,19 @@ class Moderation:
 
         role = discord.utils.get(ctx.guild.roles, id=r_id)
         await target.add_roles(role)
-        m = self.bot.muted_members.get(target.id)
-        if not m:
-            m = self.bot.muted_members[target.id] = {'muted': '0', 'mute_duration': "-1"}
-        m['muted'] = '1'
-        await self.bot.redis.hmset_dict(f"member:{target.id}", m)
+
+        timeout = datetime.now() + timedelta(minutes=minutes)
+        query = """
+            INSERT INTO mute (member_id, guild_id, muted, mute_timeout, muter_id)
+            VALUES ($1, $2, true, $3, $4)
+            ON CONFLICT (member_id) DO UPDATE
+                SET muted = true,
+                    mute_timeout = $3,
+                    muter_id = $4
+            RETURNING *
+        """
+        rec = await self.bot.pool.execute(query, target.id, ctx.guild.id, timeout, ctx.author.id)
+        self.bot.muted_members[target.id] = dict(rec)
 
         fmt = f"You've been muted by {ctx.author}!"
         if reason:
@@ -194,11 +202,16 @@ class Moderation:
             role = discord.utils.get(ctx.guild.roles, id=r_id)
             if role:
                 await target.remove_roles(role)
-                m = self.bot.muted_members.get(target.id)
-                if not m:
-                    m = self.bot.muted_members[target.id] = {'muted': '0', 'mute_duration': "-1"}
-                m['muted'] = '0'
-                await self.bot.redis.hmset_dict(f"member:{target.id}", m)
+                query = """
+                    UPDATE mute
+                        SET muted = false,
+                            mute_timeout = NULL,
+                            muter_id = NULL
+                        WHERE guild_id = $1 AND member_id = $2
+                    RETURNING *
+                """
+                rec = await self.bot.pool.execute(query, ctx.guild.id, target.id)
+                self.bot.muted_members[target.id] = dict(rec)
 
         fmt = f"You've been unmuted by {ctx.author}!"
         if reason:

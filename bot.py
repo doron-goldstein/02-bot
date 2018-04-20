@@ -69,7 +69,7 @@ class ZeroTwo(commands.Bot):
         if self.session is None:
             self.session = aiohttp.ClientSession()
 
-        mute_query = """
+        role_query = """
             SELECT * FROM mute_roles
         """
         role_query = """
@@ -78,16 +78,15 @@ class ZeroTwo(commands.Bot):
         config_query = """
             SELECT * FROM config
         """
+        mute_query = """
+            SELECT * FROM mute
+        """
 
         async with self.pool.acquire() as conn:
-            self.muted_roles = {g: r for g, r in await conn.fetch(mute_query)}
+            self.muted_roles = {g: r for g, r in await conn.fetch(role_query)}
             self.reaction_manager = {e: r for e, r in await conn.fetch(role_query)}
             self.config = {g: {'do_welcome': w, 'echo_mod_actions': m} for g, w, m in await conn.fetch(config_query)}
-            self.muted_members = {}
-            async for key in self.redis.iscan(match="member:*"):
-                d = await self.redis.hgetall(key)
-                d = {k.decode('utf-8'): v.decode('utf-8') for k, v in d.items()}
-                self.muted_members[int(key.decode('utf-8').replace("member:", ""))] = d
+            self.muted_members = {r['member_id']: r for r in await conn.fetch(mute_query)}
 
         print("Ready!")
         print(self.user.name)
