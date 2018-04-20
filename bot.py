@@ -70,7 +70,7 @@ class ZeroTwo(commands.Bot):
             self.session = aiohttp.ClientSession()
 
         mute_query = """
-            SELECT * FROM mute
+            SELECT * FROM mute_roles
         """
         role_query = """
             SELECT * FROM roles

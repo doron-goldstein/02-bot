@@ -156,7 +156,7 @@ class Moderation:
                 await c.set_permissions(role, send_messages=False)
 
             query = """
-                INSERT INTO mute (guild_id, role_id) VALUES ($1, $2)
+                INSERT INTO mute_roles (guild_id, role_id) VALUES ($1, $2)
             """
             await self.bot.pool.execute(query, ctx.guild.id, role.id)
 
