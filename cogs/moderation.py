@@ -181,8 +181,7 @@ class Moderation:
                                       f"Mute Reason:\n{reason}")
             except:  # noqa
                 pass
-        else:
-            await self.log_action(ctx, "mute", member=target, reason=reason, mod=ctx.author)
+        await self.log_action(ctx, "mute", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True, aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
@@ -214,7 +213,6 @@ class Moderation:
                                       f"Unmute Reason:\n{reason}")
             except:  # noqa
                 pass
-
         await self.log_action(ctx, "unmute", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
@@ -232,8 +230,7 @@ class Moderation:
                                       f"Warning text was:\n{warning}")
             except:  # noqa
                 pass
-        else:
-            await self.log_action(ctx, "warn", member=target, reason=warning, mod=ctx.author)
+        await self.log_action(ctx, "warn", member=target, reason=warning, mod=ctx.author)
 
     @command(hidden=True, aliases=['prune', 'p'])
     async def purge(self, ctx, count: int, *users: discord.Member):
