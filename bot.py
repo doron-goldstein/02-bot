@@ -72,7 +72,7 @@ class ZeroTwo(commands.Bot):
         role_query = """
             SELECT * FROM mute_roles
         """
-        role_query = """
+        emoji_query = """
             SELECT * FROM roles
         """
         config_query = """
@@ -84,7 +84,7 @@ class ZeroTwo(commands.Bot):
 
         async with self.pool.acquire() as conn:
             self.muted_roles = {g: r for g, r in await conn.fetch(role_query)}
-            self.reaction_manager = {e: r for e, r in await conn.fetch(role_query)}
+            self.reaction_manager = {e: r for e, r in await conn.fetch(emoji_query)}
             self.config = {g: {'do_welcome': w, 'echo_mod_actions': m} for g, w, m in await conn.fetch(config_query)}
             self.muted_members = {r['member_id']: r for r in await conn.fetch(mute_query)}
 
