@@ -54,7 +54,11 @@ class ZeroTwo(commands.Bot):
         await self.session.close()
         await super().close()
 
+    async def block_dms(self, ctx):
+        return ctx.guild is not None
+
     async def on_ready(self):
+        self.check(self.block_dms)  # haha yes
         if self.pool is None:
             self.pool = await asyncpg.create_pool(db, ssl=ssl.SSLContext(), loop=self.loop)
 
