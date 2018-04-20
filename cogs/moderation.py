@@ -167,7 +167,7 @@ class Moderation:
         query = """
             INSERT INTO mute (member_id, guild_id, muted, mute_timeout, muter_id)
             VALUES ($1, $2, true, $3, $4)
-            ON CONFLICT (member_id) DO UPDATE
+            ON CONFLICT (guild_id, member_id) DO UPDATE
                 SET muted = true,
                     mute_timeout = $3,
                     muter_id = $4
