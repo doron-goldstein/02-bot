@@ -8,21 +8,6 @@ class Roles:
         self.channel_id = 434836251766423564
         self.msg_id = 434842027692130304
         self.emoji_server_id = 417804713413836830
-        # self.reaction_manager = {
-        #     'SeXX': 407759891927924737,
-        #     '02bounce': 402315991918575636,
-        #     'strelizia': 392894112036159499,
-        #     'argentea': 392894507424940034,
-        #     'delphinium': 392894559853477899,
-        #     'genista': 392894894999601153,
-        #     'chlorophytum': 392894974234198026,
-        #     'cah': 406564673345814542,
-        #     'ThotPatrol': 405107014356697099,
-        #     'BlueOni': 412069721832292372,
-        #     '🎤': 416893959814512641,
-        #     'klaxo': 403740756105363457,
-        #     'terraria': 424639819852021763
-        # }
 
     async def cmdcheck(ctx):
         return ctx.author.id == 111158853839654912 or ctx.author.guild_permissions.manage_roles
