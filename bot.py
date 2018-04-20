@@ -103,6 +103,11 @@ class ZeroTwo(commands.Bot):
                 print(f'Failed to load extension {ext}\n{exc}')
         print("~-~-~-~")
 
+    async def make_haste(self, text):
+        resp = await self.session.post("https://hastebin.com/documents", data=text)
+        data = await resp.json()
+        return "https://hastebin.com/" + data['key']
+
     async def on_message(self, message):  # allow case-insensitive commands
         ctx = await self.get_context(message)
         if ctx.author.bot:
