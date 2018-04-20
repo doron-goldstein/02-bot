@@ -36,6 +36,7 @@ class Moderation:
 
         embed.add_field(name="Moderator", value=mod)
         embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
+        embed.set_footer(text="Invoked in #" + ctx.channel.name)
         if member.guild.id == 391483719803994113:
             await self.log_chan.send(embed=embed)
         if self.bot.config[ctx.guild.id]['echo_mod_actions']:
