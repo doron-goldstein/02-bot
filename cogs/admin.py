@@ -54,7 +54,12 @@ class Admin:
             result = eval(code, env)
             if inspect.isawaitable(result):
                 result = await result
-            return await ctx.send(f"```py\n{result}```")
+            res = f"```py\n{result}```"
+            if len(res) > 2000:
+                return await ctx.send("Result was too large, hasted:\n" + self.bot.make_haste(res))
+            else:
+                return await ctx.send(res)
+
         except:  # noqa
             try:
                 exec(fmt, env)
@@ -64,7 +69,11 @@ class Admin:
                 result = ''.join(format_exception(None, e, e.__traceback__, chain=False))
         stdout = out.read()
         if stdout is not "" or result is not None:
-            await ctx.send(f"```py\n{out.read()}\n{result}```")
+            res = f"```py\n{out.read()}\n{result}```"
+            if len(res) > 2000:
+                await ctx.send("Result was too large, hasted:\n" + self.bot.make_haste(res))
+            else:
+                await ctx.send(res)
 
     @commands.command(hidden=True)
     async def ping(self, ctx):
