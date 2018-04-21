@@ -156,7 +156,7 @@ class Moderation:
         pattern = r"(?:(?P<hours>\d+)h)?(?P<minutes>\d+)m"
         m = re.match(pattern, maybe_time)
         if m is None:
-            return reason or maybe_time, None
+            return arg, None
         minutes, hours = m.group('minutes', 'hours')
         if hours is None:
             return reason, int(minutes)
