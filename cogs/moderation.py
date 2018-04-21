@@ -1,7 +1,8 @@
-import json
-
 import asyncio
+import json
+import re
 from datetime import datetime, timedelta
+
 import discord
 from discord.ext.commands import command
 
@@ -144,8 +145,29 @@ class Moderation:
         await target.ban(reason=f"{ctx.author.name}: {reason}", delete_message_days=0)
         await self.log_action(ctx, "ban", member=target, reason=reason, mod=ctx.author)
 
-    @command(hidden=True, aliases=['gag'])
-    async def mute(self, ctx, minutes: int, target: discord.Member, *, reason=None):
+    def parse_mute(arg):
+        if arg is None:
+            return None, None
+        if len(arg.split(' ', 1)) == 1:
+            maybe_time = arg.split(' ', 1)[0]
+            reason = None
+        else:
+            maybe_time, reason = arg.split(' ', 1)
+        pattern = r"(?:(?P<hours>\d+)h)?(?P<minutes>\d+)m"
+        m = re.match(pattern, maybe_time)
+        if m is None:
+            return reason or maybe_time, None
+        minutes, hours = m.group('minutes', 'hours')
+        if hours is None:
+            return reason, int(minutes)
+        return reason, int(minutes) + int(hours) * 60
+
+    @command(hidden=True, aliases=['gag'], usage="<target> [time] [reason]")
+    async def mute(self, ctx, target: discord.Member, *, body: parse_mute = None):
+        if body is None:
+            reason, minutes = None, None
+        else:
+            reason, minutes = body
         await ctx.message.delete()
         r_id = self.bot.muted_roles.get(ctx.guild.id)
         if not r_id:
@@ -163,7 +185,7 @@ class Moderation:
         role = discord.utils.get(ctx.guild.roles, id=r_id)
         await target.add_roles(role)
 
-        timeout = datetime.now() + timedelta(minutes=minutes)
+        timeout = datetime.now() + timedelta(minutes=minutes) if minutes else None
         query = """
             INSERT INTO mute (member_id, guild_id, muted, mute_timeout, muter_id)
             VALUES ($1, $2, true, $3, $4)
