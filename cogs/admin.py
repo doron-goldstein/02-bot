@@ -56,7 +56,7 @@ class Admin:
                 result = await result
             res = f"```py\n{result}```"
             if len(res) > 2000:
-                return await ctx.send("Result was too large, hasted:\n" + self.bot.make_haste(res))
+                return await ctx.send("Result was too large, hasted:\n" + await self.bot.make_haste(res))
             else:
                 return await ctx.send(res)
 
@@ -71,7 +71,7 @@ class Admin:
         if stdout is not "" or result is not None:
             res = f"```py\n{out.read()}\n{result}```"
             if len(res) > 2000:
-                await ctx.send("Result was too large, hasted:\n" + self.bot.make_haste(res))
+                await ctx.send("Result was too large, hasted:\n" + await self.bot.make_haste(res))
             else:
                 await ctx.send(res)
 
