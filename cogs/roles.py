@@ -43,6 +43,7 @@ class Roles:
         query = """
             INSERT INTO roles (emoji_name, role_id) VALUES ($1, $2)
         """
+        
         await self.bot.pool.execute(query, emoji_name, role.id)
         await ctx.send(f"Added `{emoji_name}` as an assignable role!")
 

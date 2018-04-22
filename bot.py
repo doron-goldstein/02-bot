@@ -1,6 +1,8 @@
+import asyncio
 import logging
 import os
 import ssl
+from datetime import datetime
 
 import aiohttp
 import aioredis
@@ -8,6 +10,7 @@ import asyncpg
 import discord
 from discord.ext import commands
 from ruamel.yaml import YAML
+
 
 startup_extensions = ["fun", "moderation", "admin", "franxx", "logger", "roles", "errors"]
 extensions = ["cogs." + ext for ext in startup_extensions]
@@ -87,7 +90,7 @@ class ZeroTwo(commands.Bot):
             self.reaction_manager = {e: r for e, r in await conn.fetch(emoji_query)}
             self.config = {g: {'do_welcome': w, 'echo_mod_actions': m} for g, w, m in await conn.fetch(config_query)}
             self.muted_members = {r['member_id']: dict(r) for r in await conn.fetch(mute_query)}
-
+        await self.handle_mutes()
         print("Ready!")
         print(self.user.name)
         print(self.user.id)
@@ -101,6 +104,32 @@ class ZeroTwo(commands.Bot):
                 exc = f'{type(e).__name__}: {e}'
                 print(f'Failed to load extension {ext}\n{exc}')
         print("~-~-~-~")
+
+    async def handle_mutes(self):
+        for m_id, d in self.muted_members.items():
+            if not d['muted']:
+                continue
+            self.loop.create_task(self.ensure_unmute(m_id, d))
+
+    async def ensure_unmute(self, m_id, data):
+        now = datetime.utcnow()
+        end = data['mute_timeout']
+        if end is None:
+            return
+
+        if end < now:  # mute time passed
+            reason = "Auto-unmuted."
+            guild = self.get_guild(data['guild_id'])
+            if guild is None:
+                return
+            mod = guild.me
+            member = guild.get_member(m_id)
+            cog = self.get_cog('Moderation')
+            await cog._do_unmute(member, reason=reason, mod=mod, guild=guild)
+
+        else:  # wait, then try again
+            await asyncio.sleep((end - now).total_seconds())
+            await self.ensure_unmute(m_id, data)
 
     async def make_haste(self, text, *, raw=False):
         url = "https://hastebin.com/"

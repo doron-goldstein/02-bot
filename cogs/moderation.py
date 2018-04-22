@@ -84,7 +84,7 @@ class Moderation:
             r = dict(r)
             self.bot.config[r.pop('guild_id')] = r
             config = self.bot.config[ctx.guild.id]
-            
+
         fmt += "```"
         for i, key in enumerate(config):
             fmt += f"\n{i+1}. [{key}] : {config[key]}"
@@ -214,6 +214,7 @@ class Moderation:
         """
         rec = await self.bot.pool.fetchrow(query, target.id, ctx.guild.id, timeout, ctx.author.id)
         self.bot.muted_members[target.id] = dict(rec)
+        self.bot.loop.create_task(self.bot.ensure_unmute(target.id, self.bot.muted_members[target.id]))
 
         fmt = f"You've been muted by {ctx.author}!"
         if reason:
@@ -230,17 +231,10 @@ class Moderation:
                 pass
         await self.log_action(ctx, "mute", member=target, reason=reason, mod=ctx.author)
 
-    @command(hidden=True, aliases=['ungag'])
-    async def unmute(self, ctx, target: discord.Member, *, reason=None):
-        """Unmutes a member. The reason will be sent as a notice to said member in a DM."""
-
-        try:
-            await ctx.message.delete()
-        except:  # noqa
-            pass
-        r_id = self.bot.muted_roles[ctx.guild.id]
+    async def _do_unmute(self, target, *, reason, mod, guild):
+        r_id = self.bot.muted_roles[guild.id]
         if r_id:
-            role = discord.utils.get(ctx.guild.roles, id=r_id)
+            role = discord.utils.get(guild.roles, id=r_id)
             if role:
                 await target.remove_roles(role)
                 query = """
@@ -251,10 +245,10 @@ class Moderation:
                         WHERE guild_id = $1 AND member_id = $2
                     RETURNING *
                 """
-                rec = await self.bot.pool.fetchrow(query, ctx.guild.id, target.id)
+                rec = await self.bot.pool.fetchrow(query, guild.id, target.id)
                 self.bot.muted_members[target.id] = dict(rec)
 
-        fmt = f"You've been unmuted by {ctx.author}!"
+        fmt = f"You've been unmuted by {mod}!"
         if reason:
             fmt += f"\nReason: \"{reason}\""
 
@@ -262,11 +256,20 @@ class Moderation:
             await target.send(fmt)
         except:  # noqa
             try:
-                await ctx.author.send(f"Could not send unmute notice to `{target}`.\n"
-                                      "They may have DMs disabled, or have blocked me.\n\n"
-                                      f"Unmute Reason:\n{reason}")
+                await mod.send(f"Could not send unmute notice to `{target}`.\n"
+                               "They may have DMs disabled, or have blocked me.\n\n"
+                               f"Unmute Reason:\n{reason}")
             except:  # noqa
                 pass
+
+    @command(hidden=True, aliases=['ungag'])
+    async def unmute(self, ctx, target: discord.Member, *, reason=None):
+        """Unmutes a member. The reason will be sent as a notice to said member in a DM."""
+        try:
+            await ctx.message.delete()
+        except:  # noqa
+            pass
+        await self._do_unmute(target, reason=reason, mod=ctx.author, guild=ctx.guild)
         await self.log_action(ctx, "unmute", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
