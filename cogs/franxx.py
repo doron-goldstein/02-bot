@@ -101,7 +101,7 @@ class FranXX:
         if self.bot.config[member.guild.id]['do_welcome']:
             m = await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
                                               "Only those who read <#434836251766423564> can ride Strelizia with me.\n"
-                                              "Proceed to there to collect your roles as well!")
+                                              "Proceed there to collect your roles as well!")
             try:
                 await m.add_reaction(self.welcome_emoji)
             except:  # noqa
