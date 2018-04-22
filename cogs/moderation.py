@@ -270,7 +270,7 @@ class Moderation:
             INSERT INTO warnings (guild_id, member_id, reason, moderator_id, warned_at)
             VALUES ($1, $2, $3, $4, $5)
         """
-        await self.pool.execute(query, ctx.guild.id, target.id, warning, ctx.author.id, datetime.utcnow())
+        await self.bot.pool.execute(query, ctx.guild.id, target.id, warning, ctx.author.id, datetime.utcnow())
 
         await self.log_action(ctx, "warn", member=target, reason=warning, mod=ctx.author)
 
