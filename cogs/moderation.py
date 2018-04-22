@@ -78,8 +78,11 @@ class Moderation:
         except KeyError:
             query = """
                 INSERT INTO config VALUES ($1, $2 ,$3)
+                RETURNING *
             """
-            await self.bot.pool.execute(query, ctx.guild.id, False, False)
+            r = await self.bot.pool.fetchrow(query, ctx.guild.id, False, False)
+            r = dict(r)
+            self.bot.config[r.pop('guild_id')] = r
         fmt += "```"
         for i, key in enumerate(config):
             fmt += f"\n{i+1}. [{key}] : {config[key]}"
