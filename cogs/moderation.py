@@ -69,6 +69,8 @@ class Moderation:
 
     @command(hidden=True)  # this is actually horrid
     async def config(self, ctx):
+        """Allows configuration of options for the server."""
+
         fmt = "Enter config number to toggle the value, or `x` to cancel:"
         config_index = {}
         try:
@@ -102,6 +104,8 @@ class Moderation:
 
     @command(hidden=True)
     async def lock(self, ctx):
+        """Locks down the current channel."""
+
         await ctx.message.delete()
         msg = await ctx.send("This channel is now under lockdown!")
         perms = ctx.channel.overwrites_for(ctx.guild.default_role)
@@ -117,6 +121,8 @@ class Moderation:
 
     @command(hidden=True)
     async def unlock(self, ctx):
+        """Releases the current channel from lockdown."""
+
         await ctx.message.delete()
         query = """
             DELETE FROM lockdown WHERE channel_id=$1 RETURNING *
@@ -135,12 +141,16 @@ class Moderation:
 
     @command(hidden=True)
     async def kick(self, ctx, target: discord.Member, *, reason=None):
+        """Kicks a member."""
+
         await ctx.message.delete()
         await target.kick(reason=f"{ctx.author.name}: {reason}")
         await self.log_action(ctx, "kick", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
     async def ban(self, ctx, target: discord.Member, *, reason=None):
+        """Bans a member."""
+
         await ctx.message.delete()
         await target.ban(reason=f"{ctx.author.name}: {reason}", delete_message_days=0)
         await self.log_action(ctx, "ban", member=target, reason=reason, mod=ctx.author)
@@ -164,6 +174,8 @@ class Moderation:
 
     @command(hidden=True, aliases=['gag'], usage="<target> [time] [reason]")
     async def mute(self, ctx, target: discord.Member, *, body: parse_mute = None):
+        """Mutes a member. The reason will be sent as a notice to said member in a DM."""
+
         if body is None:
             reason, minutes = None, None
         else:
@@ -215,6 +227,8 @@ class Moderation:
 
     @command(hidden=True, aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
+        """Unmutes a member. The reason will be sent as a notice to said member in a DM."""
+
         try:
             await ctx.message.delete()
         except:  # noqa
@@ -252,6 +266,8 @@ class Moderation:
 
     @command(hidden=True)
     async def warn(self, ctx, target: discord.Member, *, warning=None):
+        """Warns a member. The warning will be send to said member in a DM."""
+
         await ctx.message.delete()
         try:
             if warning is None:
@@ -267,15 +283,18 @@ class Moderation:
                 pass
 
         query = """
-            INSERT INTO warnings (guild_id, member_id, reason, moderator_id, warned_at)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO warnings (guild_id, member_id, reason, moderator_id, warned_at, channel_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
         """
-        await self.bot.pool.execute(query, ctx.guild.id, target.id, warning, ctx.author.id, datetime.utcnow())
+        await self.bot.pool.execute(query, ctx.guild.id, target.id, warning,
+                                    ctx.author.id, datetime.utcnow(), ctx.channel.id)
 
         await self.log_action(ctx, "warn", member=target, reason=warning, mod=ctx.author)
 
     @command(hidden=True, aliases=['prune', 'p'])
     async def purge(self, ctx, count: int, *users: discord.Member):
+        """Deletes messages en masse."""
+
         await ctx.message.delete()
         if count > 100:
             await ctx.send(f"You are about to purge {count}. Are you sure you want to purge these many messages? (y/n)")
@@ -294,6 +313,32 @@ class Moderation:
             await ctx.channel.purge(limit=count, check=lambda message: message.author in users if users else True)
         except discord.HTTPException:
             await ctx.send("Something went wrong! Could not purge.")
+
+    @command(hidden=True)
+    async def check(self, ctx, target: discord.Member):
+        """Shows the list of previous warnings a member has been given."""
+
+        query = """
+            SELECT * FROM warnings
+            WHERE guild_id = $1 AND member_id = $2
+        """
+        recs = await self.bot.pool.fetch(query, ctx.guild.id, target.id)
+        txt = ""
+        for r in recs:
+            mod = ctx.guild.get_member(r['moderator_id'])
+            channel = ctx.guild.get_channel(r['channel_id'])
+            warning = r['reason']
+            timestamp = r['warned_at']
+            time_fmt = datetime.strftime(timestamp, r"%H:%M %h %d %Y")
+            fmt = f"**MOD**: {mod}\n**TARGET**: {target}\n**WARNING**: {warning}\n**AT**: {time_fmt}\n**IN**: {'#' + channel.name if channel else 'NULL'}\n{'-' * 10}\n"  # noqa: E226, E501
+            txt += fmt
+        if txt:
+            if len(txt) >= 2000:
+                haste = await self.bot.make_haste(txt, raw=True)
+                return await ctx.send(haste)
+            await ctx.send(txt)
+        else:
+            await ctx.send("No warnings for " + str(target))
 
 
 def setup(bot):
