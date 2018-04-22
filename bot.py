@@ -123,9 +123,14 @@ class ZeroTwo(commands.Bot):
             if guild is None:
                 return
             mod = guild.me
+            original_mod = guild.get_member(data['muter_id'])
             member = guild.get_member(m_id)
             cog = self.get_cog('Moderation')
             await cog._do_unmute(member, reason=reason, mod=mod, guild=guild)
+            embed = discord.Embed(title="Member Auto-unmuted")
+            embed.add_field(name="Original Moderator", value=str(original_mod))
+            embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
+            await cog.log_chan.send()
 
         else:  # wait, then try again
             await asyncio.sleep((end - now).total_seconds())

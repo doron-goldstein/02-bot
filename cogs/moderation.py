@@ -30,12 +30,14 @@ class Moderation:
         perms = ctx.author.guild_permissions
         return (perms.kick_members and perms.ban_members) or ctx.author.id == 111158853839654912
 
-    async def log_action(self, ctx, action, *, member, reason=None, mod=None):
+    async def log_action(self, ctx, action, *, member, reason=None, mod=None, minutes=None):
         embed = discord.Embed(title=f"Member {action}", description=reason)
         embed.color = self.embed_colors[action]
         embed.timestamp = datetime.now()
 
         embed.add_field(name="Moderator", value=mod)
+        if minutes is not None:
+            embed.add_field(name="Unmute in", value=str(minutes) + " minutes")
         embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
         embed.set_footer(text="Invoked in #" + ctx.channel.name)
         if ctx.guild.id == 391483719803994113:
@@ -217,6 +219,8 @@ class Moderation:
         self.bot.loop.create_task(self.bot.ensure_unmute(target.id, self.bot.muted_members[target.id]))
 
         fmt = f"You've been muted by {ctx.author}!"
+        if minutes is not None:
+            fmt += f"\nMute duration: {minutes} minute(s)"
         if reason:
             fmt += f"\nReason: \"{reason}\""
 
@@ -229,7 +233,7 @@ class Moderation:
                                       f"Mute Reason:\n{reason}")
             except:  # noqa
                 pass
-        await self.log_action(ctx, "mute", member=target, reason=reason, mod=ctx.author)
+        await self.log_action(ctx, "mute", member=target, reason=reason, mod=ctx.author, minutes=minutes)
 
     async def _do_unmute(self, target, *, reason, mod, guild):
         r_id = self.bot.muted_roles[guild.id]
