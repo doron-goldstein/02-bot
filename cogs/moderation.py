@@ -185,7 +185,7 @@ class Moderation:
         role = discord.utils.get(ctx.guild.roles, id=r_id)
         await target.add_roles(role)
 
-        timeout = datetime.now() + timedelta(minutes=minutes) if minutes else None
+        timeout = datetime.utcnow() + timedelta(minutes=minutes) if minutes else None
         query = """
             INSERT INTO mute (member_id, guild_id, muted, mute_timeout, muter_id)
             VALUES ($1, $2, true, $3, $4)
@@ -265,6 +265,13 @@ class Moderation:
                                       f"Warning text was:\n{warning}")
             except:  # noqa
                 pass
+
+        query = """
+            INSERT INTO warnings (guild_id, member_id, reason, moderator_id, warned_at)
+            VALUES ($1, $2, $3, $4, $5)
+        """
+        await self.pool.execute(query, ctx.guild.id, target.id, warning, ctx.author.id, datetime.utcnow())
+
         await self.log_action(ctx, "warn", member=target, reason=warning, mod=ctx.author)
 
     @command(hidden=True, aliases=['prune', 'p'])
