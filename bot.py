@@ -130,7 +130,7 @@ class ZeroTwo(commands.Bot):
             embed = discord.Embed(title="Member Auto-unmuted")
             embed.add_field(name="Original Moderator", value=str(original_mod))
             embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
-            await cog.log_chan.send()
+            await cog.log_chan.send(embed=embed)
 
         else:  # wait, then try again
             await asyncio.sleep((end - now).total_seconds())
