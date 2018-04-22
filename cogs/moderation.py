@@ -83,6 +83,8 @@ class Moderation:
             r = await self.bot.pool.fetchrow(query, ctx.guild.id, False, False)
             r = dict(r)
             self.bot.config[r.pop('guild_id')] = r
+            config = self.bot.config[ctx.guild.id]
+            
         fmt += "```"
         for i, key in enumerate(config):
             fmt += f"\n{i+1}. [{key}] : {config[key]}"
