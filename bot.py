@@ -55,6 +55,8 @@ class ZeroTwo(commands.Bot):
         print("Cleaning up...")
         await self.pool.close()
         await self.session.close()
+        self.redis.close()
+        await self.redis.wait_closed()
         await super().close()
 
     async def block_dms(self, ctx):
