@@ -84,7 +84,7 @@ class ZeroTwo(commands.Bot):
             SELECT * FROM config
         """
         mute_query = """
-            SELECT * FROM mute
+            SELECT * FROM mute_states
         """
 
         async with self.pool.acquire() as conn:

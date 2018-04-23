@@ -222,7 +222,7 @@ class Moderation:
 
         timeout = datetime.utcnow() + timedelta(minutes=minutes) if minutes else None
         query = """
-            INSERT INTO mute (member_id, guild_id, muted, mute_timeout, muter_id)
+            INSERT INTO mute_states (member_id, guild_id, muted, mute_timeout, muter_id)
             VALUES ($1, $2, true, $3, $4)
             ON CONFLICT (guild_id, member_id) DO UPDATE
                 SET muted = true,
@@ -258,7 +258,7 @@ class Moderation:
             if role:
                 await target.remove_roles(role)
                 query = """
-                    UPDATE mute
+                    UPDATE mute_states
                         SET muted = false,
                             mute_timeout = NULL,
                             muter_id = NULL
