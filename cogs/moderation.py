@@ -152,6 +152,14 @@ class Moderation:
 
         await ctx.message.delete()
         await target.kick(reason=f"{ctx.author.name}: {reason}")
+
+        query = """
+            INSERT INTO kicks (guild_id, member_id, channel_id, moderator_id, reason, kicked_at)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        """
+        await self.pool.execute(query, ctx.guild.id, target.id, ctx.channel.id,
+                                ctx.author.id, reason, datetime.utcnow())
+
         await self.log_action(ctx, "kick", member=target, reason=reason, mod=ctx.author)
 
     @command(hidden=True)
@@ -160,6 +168,14 @@ class Moderation:
 
         await ctx.message.delete()
         await target.ban(reason=f"{ctx.author.name}: {reason}", delete_message_days=0)
+
+        query = """
+            INSERT INTO bans (guild_id, member_id, channel_id, moderator_id, reason, banned_at)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        """
+        await self.pool.execute(query, ctx.guild.id, target.id, ctx.channel.id,
+                                ctx.author.id, reason, datetime.utcnow())
+
         await self.log_action(ctx, "ban", member=target, reason=reason, mod=ctx.author)
 
     def parse_mute(arg):
