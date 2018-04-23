@@ -154,7 +154,7 @@ class Moderation:
         await target.kick(reason=f"{ctx.author.name}: {reason}")
 
         query = """
-            INSERT INTO kicks (guild_id, member_id, channel_id, moderator_id, reason, kicked_at)
+            INSERT INTO kicks (guild_id, member_id, channel_id, moderator_id, reason, action_time)
             VALUES ($1, $2, $3, $4, $5, $6)
         """
         await self.bot.pool.execute(query, ctx.guild.id, target.id, ctx.channel.id,
@@ -170,7 +170,7 @@ class Moderation:
         await target.ban(reason=f"{ctx.author.name}: {reason}", delete_message_days=0)
 
         query = """
-            INSERT INTO bans (guild_id, member_id, channel_id, moderator_id, reason, banned_at)
+            INSERT INTO bans (guild_id, member_id, channel_id, moderator_id, reason, action_time)
             VALUES ($1, $2, $3, $4, $5, $6)
         """
         await self.bot.pool.execute(query, ctx.guild.id, target.id, ctx.channel.id,
@@ -222,7 +222,7 @@ class Moderation:
 
         timeout = datetime.utcnow() + timedelta(minutes=minutes) if minutes else None
         log_query = """
-            INSERT INTO mutes (guild_id, member_id, channel_id, moderator_id, reason, muted_at)
+            INSERT INTO mutes (guild_id, member_id, channel_id, moderator_id, reason, action_time)
             VALUES ($1, $2, $3, $4, $5, $6)
         """
         await self.bot.pool.execute(log_query, ctx.guild.id, target.id, ctx.channel.id,
@@ -319,7 +319,7 @@ class Moderation:
                 pass
 
         query = """
-            INSERT INTO warnings (guild_id, member_id, reason, moderator_id, warned_at, channel_id)
+            INSERT INTO warnings (guild_id, member_id, reason, moderator_id, action_time, channel_id)
             VALUES ($1, $2, $3, $4, $5, $6)
         """
         await self.bot.pool.execute(query, ctx.guild.id, target.id, warning,
@@ -351,11 +351,25 @@ class Moderation:
             await ctx.send("Something went wrong! Could not purge.")
 
     @command(hidden=True)
-    async def check(self, ctx, target: discord.Member):
+    async def check(self, ctx, target: discord.Member, action_type="warnings"):
         """Shows the list of previous warnings a member has been given."""
 
-        query = """
-            SELECT * FROM warnings
+        types = {
+            'warnings': 'warnings',
+            'warning': 'warnings',
+            'warn': 'warnings',
+            'bans': 'bans',
+            'ban': 'bans',
+            'kicks': 'kicks',
+            'kick': 'kicks',
+            'mutes': 'mutes',
+            'mute': 'mutes'
+        }
+        if action_type not in types.keys():
+            return await ctx.send(f"Couldnt find that action type! I log: {', '.join(set(types.values()))}.")
+
+        query = f"""
+            SELECT * FROM {types[action_type]}
             WHERE guild_id = $1 AND member_id = $2
         """
         recs = await self.bot.pool.fetch(query, ctx.guild.id, target.id)
@@ -364,9 +378,9 @@ class Moderation:
             mod = ctx.guild.get_member(r['moderator_id'])
             channel = ctx.guild.get_channel(r['channel_id'])
             warning = r['reason']
-            timestamp = r['warned_at']
+            timestamp = r['action_time']
             time_fmt = datetime.strftime(timestamp, r"%H:%M %h %d %Y")
-            fmt = f"**MOD**: {mod}\n**TARGET**: {target}\n**WARNING**: {warning}\n**AT**: {time_fmt}\n**IN**: {'#' + channel.name if channel else 'NULL'}\n{'-' * 10}\n"  # noqa: E226, E501
+            fmt = f"**MOD**: {mod}\n**TARGET**: {target}\n**REASON**: {warning}\n**AT**: {time_fmt}\n**IN**: {'#' + channel.name if channel else 'NULL'}\n{'-' * 10}\n"  # noqa: E226, E501
             txt += fmt
         if txt:
             if len(txt) >= 2000:
