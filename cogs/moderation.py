@@ -221,6 +221,13 @@ class Moderation:
         await target.add_roles(role)
 
         timeout = datetime.utcnow() + timedelta(minutes=minutes) if minutes else None
+        log_query = """
+            INSERT INTO mutes (guild_id, member_id, channel_id, moderator_id, reason, muted_at)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        """
+        await self.bot.pool.execute(log_query, ctx.guild.id, target.id, ctx.channel.id,
+                                    ctx.author.id, reason, datetime.utcnow())
+
         query = """
             INSERT INTO mute_states (member_id, guild_id, muted, mute_timeout, muter_id)
             VALUES ($1, $2, true, $3, $4)
@@ -231,6 +238,7 @@ class Moderation:
             RETURNING *
         """
         rec = await self.bot.pool.fetchrow(query, target.id, ctx.guild.id, timeout, ctx.author.id)
+
         self.bot.muted_members[target.id] = dict(rec)
         self.bot.loop.create_task(self.bot.ensure_unmute(target.id, self.bot.muted_members[target.id]))
 
