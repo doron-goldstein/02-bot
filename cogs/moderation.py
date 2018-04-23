@@ -373,7 +373,7 @@ class Moderation:
             WHERE guild_id = $1 AND member_id = $2
         """
         recs = await self.bot.pool.fetch(query, ctx.guild.id, target.id)
-        txt = ""
+        txt = types[action_type] + " list:\n"
         for r in recs:
             mod = ctx.guild.get_member(r['moderator_id'])
             channel = ctx.guild.get_channel(r['channel_id'])
