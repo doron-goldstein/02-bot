@@ -64,7 +64,7 @@ class Moderation:
                     ctx = await self.bot.get_context(message)
                     ctx.author = ctx.guild.me
                     await ctx.invoke(self.bot.get_command("mute"), message.author,
-                                     reason="Image / file spamming")
+                                     body="Image / file spamming")
                     await asyncio.sleep(5 * 60)
                     await ctx.invoke(self.bot.get_command("unmute"), message.author,
                                      reason="5 minutes have passed. Please refrain from spamming.")
