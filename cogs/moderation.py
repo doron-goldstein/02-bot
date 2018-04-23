@@ -351,8 +351,11 @@ class Moderation:
             await ctx.send("Something went wrong! Could not purge.")
 
     @command(hidden=True)
-    async def check(self, ctx, target: discord.Member, action_type="warnings"):
+    async def check(self, ctx, target: discord.Member, action_type="overall"):
         """Shows the list of previous warnings a member has been given."""
+
+        if action_type == "overall":
+            return await self.overall_check(ctx, target)
 
         types = {
             'warnings': 'warnings',
@@ -366,7 +369,8 @@ class Moderation:
             'mute': 'mutes'
         }
         if action_type not in types.keys():
-            return await ctx.send(f"Couldnt find that action type! I log: {', '.join(set(types.values()))}.")
+            return await ctx.send(f"Couldnt find that action type! I log: {', '.join(set(types.values()))}.\n"
+                                  "You may also omit the type, and I'll show you overall info about the member.")
 
         query = f"""
             SELECT * FROM {types[action_type]}
@@ -389,6 +393,40 @@ class Moderation:
             await ctx.send(txt)
         else:
             await ctx.send("No warnings for " + str(target))
+
+    async def overall_check(self, ctx, target):
+        query = """
+            SELECT
+            (
+                SELECT count(*) FROM mutes
+                WHERE member_id = $1
+            ) AS mute_count,
+            (
+                SELECT count(*) FROM bans
+                WHERE member_id = $1
+            ) AS ban_count,
+            (
+                SELECT count(*) FROM kicks
+                WHERE member_id = $1
+            ) AS kick_count,
+            (
+                SELECT count(*) FROM warnings
+                WHERE member_id = $1
+            ) AS warning_count
+        """
+        rec = await self.bot.pool.fetchrow(query, target.id)
+        mutes = rec['mute_count']
+        bans = rec['ban_count']
+        kicks = rec['kick_count']
+        warnings = rec['warning_count']
+        description = f'For more info on each field, do `>check Target#1234 field`.\n" \
+                      "For example, `>check {target} bans`'
+        embed = discord.Embed(title=f"Moderation stats for `{target}`", description=description) \
+            .add_field(name="Total Warnings", value=warnings, inline=False) \
+            .add_field(name="Total Mutes", value=mutes, inline=False) \
+            .add_field(name="Total Kicks", value=kicks, inline=False) \
+            .add_field(name="Total Bans", value=bans, inline=False)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
