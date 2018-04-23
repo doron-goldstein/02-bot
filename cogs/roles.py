@@ -41,9 +41,9 @@ class Roles:
         self.bot.reaction_manager[emoji_name] = role.id
 
         query = """
-            INSERT INTO roles (emoji_name, role_id) VALUES ($1, $2)
+            INSERT INTO reaction_roles (emoji_name, role_id) VALUES ($1, $2)
         """
-        
+
         await self.bot.pool.execute(query, emoji_name, role.id)
         await ctx.send(f"Added `{emoji_name}` as an assignable role!")
 

@@ -78,7 +78,7 @@ class ZeroTwo(commands.Bot):
             SELECT * FROM mute_roles
         """
         emoji_query = """
-            SELECT * FROM roles
+            SELECT * FROM reaction_roles
         """
         config_query = """
             SELECT * FROM config
