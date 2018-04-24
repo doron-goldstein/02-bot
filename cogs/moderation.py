@@ -53,6 +53,9 @@ class Moderation:
             await channel.set_permissions(role, send_messages=False)
 
     async def on_message(self, message):
+        if message.bot:
+            return
+
         if message.attachments:
             past = datetime.utcnow() - timedelta(minutes=1)
             channel = message.channel
