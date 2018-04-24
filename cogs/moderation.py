@@ -422,8 +422,8 @@ class Moderation:
         bans = rec['ban_count']
         kicks = rec['kick_count']
         warnings = rec['warning_count']
-        description = f'For more info on each field, do `>check Target#1234 field`.\n" \
-                      "For example, `>check {target} bans`'
+        description = 'For more info on each field, do `>check Target#1234 field`.\n' \
+                      f'For example, `>check {target} bans`'
         embed = discord.Embed(title=f"Moderation stats for `{target}`", description=description) \
             .add_field(name="Total Warnings", value=warnings, inline=False) \
             .add_field(name="Total Mutes", value=mutes, inline=False) \
