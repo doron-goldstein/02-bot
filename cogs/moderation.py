@@ -53,7 +53,7 @@ class Moderation:
             await channel.set_permissions(role, send_messages=False)
 
     async def on_message(self, message):
-        if message.bot:
+        if message.author.bot:
             return
 
         if message.attachments:
