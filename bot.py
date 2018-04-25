@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 import ssl
 from datetime import datetime
@@ -30,8 +29,6 @@ except:  # noqa
     redis = (os.environ.get("REDIS_ADDR"), os.environ.get("REDIS_PW"))
     img_auth = os.environ.get("WOLKE_TOKEN")
     dev = False
-
-logging.basicConfig(level=logging.INFO)
 
 
 async def get_prefix(bot, msg):
