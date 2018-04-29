@@ -165,7 +165,7 @@ class Moderation:
 
         await self.log_action(ctx, "kick", member=target, reason=reason, mod=ctx.author)
 
-    @command(hidden=True)
+    @command(hidden=True, aliases=['dab'])
     async def ban(self, ctx, target: discord.Member, *, reason=None):
         """Bans a member."""
 
