@@ -57,7 +57,7 @@ class Moderation:
             return
 
         if message.attachments:
-            past = datetime.utcnow() - timedelta(minutes=1)
+            past = datetime.utcnow() - timedelta(minutes=0.5)
             channel = message.channel
             c = 0
             async for m in channel.history(after=past):
