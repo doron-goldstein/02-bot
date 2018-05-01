@@ -149,6 +149,7 @@ class Moderation:
             """
             await self.bot.pool.execute(query, channel.id)
             self.spamguard_blacklist.remove(channel.id)
+            await ctx.send(msg)
 
         else:  # DISABLE
             msg = f"Successfully disabled the spamguard in {channel.mention}."
@@ -160,6 +161,7 @@ class Moderation:
             """
             await self.bot.pool.execute(query, channel.id)
             self.spamguard_blacklist.append(channel.id)
+            await ctx.send(msg)
 
     @command()
     async def lock(self, ctx):
