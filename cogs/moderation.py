@@ -57,7 +57,7 @@ class Moderation:
         if ctx.channel.id in self.spamguard_blacklist:
             return
 
-        if ctx.attachments:
+        if ctx.message.attachments:
             past = datetime.utcnow() - timedelta(minutes=0.5)  # search back for half a min
             c = 0
             async for m in ctx.history(after=past):
