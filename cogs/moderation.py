@@ -78,7 +78,7 @@ class Moderation:
         ctx = self.bot.get_context(message)
         await self.handle_spamguard(ctx)
 
-    @command(hidden=True)  # this is actually horrid
+    @command()  # this is actually horrid
     async def config(self, ctx):
         """Allows configuration of options for the server."""
 
@@ -161,7 +161,7 @@ class Moderation:
             await self.bot.pool.execute(query, channel.id)
             self.spamguard_blacklist.append(channel.id)
 
-    @command(hidden=True)
+    @command()
     async def lock(self, ctx):
         """Locks down the current channel."""
 
@@ -178,7 +178,7 @@ class Moderation:
         perms.add_reactions = False
         await ctx.channel.set_permissions(ctx.guild.default_role, overwrite=perms)
 
-    @command(hidden=True)
+    @command()
     async def unlock(self, ctx):
         """Releases the current channel from lockdown."""
 
@@ -198,7 +198,7 @@ class Moderation:
         await ctx.channel.set_permissions(ctx.guild.default_role, overwrite=perms)
         await ctx.send("This channel is no longer under lockdown.", delete_after=10)
 
-    @command(hidden=True)
+    @command()
     async def kick(self, ctx, target: discord.Member, *, reason=None):
         """Kicks a member."""
 
@@ -214,7 +214,7 @@ class Moderation:
 
         await self.log_action(ctx, "kick", member=target, reason=reason, mod=ctx.author)
 
-    @command(hidden=True, aliases=['dab'])
+    @command(, aliases=['dab'])
     async def ban(self, ctx, target: discord.Member, *, reason=None):
         """Bans a member."""
 
@@ -247,7 +247,7 @@ class Moderation:
             return reason, int(minutes)
         return reason, int(minutes) + int(hours) * 60
 
-    @command(hidden=True, aliases=['gag'], usage="<target> [time] [reason]")
+    @command(, aliases=['gag'], usage="<target> [time] [reason]")
     async def mute(self, ctx, target: discord.Member, *, body: parse_mute = None):
         """Mutes a member. The reason will be sent as a notice to said member in a DM."""
 
@@ -342,7 +342,7 @@ class Moderation:
             except:  # noqa
                 pass
 
-    @command(hidden=True, aliases=['ungag'])
+    @command(, aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
         """Unmutes a member. The reason will be sent as a notice to said member in a DM."""
         try:
@@ -352,7 +352,7 @@ class Moderation:
         await self._do_unmute(target, reason=reason, mod=ctx.author, guild=ctx.guild)
         await self.log_action(ctx, "unmute", member=target, reason=reason, mod=ctx.author)
 
-    @command(hidden=True)
+    @command()
     async def warn(self, ctx, target: discord.Member, *, warning=None):
         """Warns a member. The warning will be send to said member in a DM."""
 
@@ -379,7 +379,7 @@ class Moderation:
 
         await self.log_action(ctx, "warn", member=target, reason=warning, mod=ctx.author)
 
-    @command(hidden=True, aliases=['prune', 'p'])
+    @command(, aliases=['prune', 'p'])
     async def purge(self, ctx, count: int, *users: discord.Member):
         """Deletes messages en masse."""
 
@@ -402,7 +402,7 @@ class Moderation:
         except discord.HTTPException:
             await ctx.send("Something went wrong! Could not purge.")
 
-    @command(hidden=True)
+    @command()
     async def check(self, ctx, target: discord.Member, action_type="overall"):
         """Shows the list of previous warnings a member has been given."""
 
