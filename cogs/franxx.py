@@ -64,6 +64,7 @@ class FranXX:
     @commands.command(aliases=["episode", "nextepisode", "airtime"])
     async def next(self, ctx):
         """Countdown to next episode of the anime."""
+
         air_time = self.get_formatted_time("Saturday", hour=23, minute=30)
         crunchy = self.get_formatted_time("Saturday", hour=23, minute=30, delta=1.5)
         preview = self.get_formatted_time("Thursday", hour=18, minute=0)

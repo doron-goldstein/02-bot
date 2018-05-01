@@ -214,7 +214,7 @@ class Moderation:
 
         await self.log_action(ctx, "kick", member=target, reason=reason, mod=ctx.author)
 
-    @command(, aliases=['dab'])
+    @command(aliases=['dab'])
     async def ban(self, ctx, target: discord.Member, *, reason=None):
         """Bans a member."""
 
@@ -247,7 +247,7 @@ class Moderation:
             return reason, int(minutes)
         return reason, int(minutes) + int(hours) * 60
 
-    @command(, aliases=['gag'], usage="<target> [time] [reason]")
+    @command(aliases=['gag'], usage="<target> [time] [reason]")
     async def mute(self, ctx, target: discord.Member, *, body: parse_mute = None):
         """Mutes a member. The reason will be sent as a notice to said member in a DM."""
 
@@ -342,7 +342,7 @@ class Moderation:
             except:  # noqa
                 pass
 
-    @command(, aliases=['ungag'])
+    @command(aliases=['ungag'])
     async def unmute(self, ctx, target: discord.Member, *, reason=None):
         """Unmutes a member. The reason will be sent as a notice to said member in a DM."""
         try:
@@ -379,7 +379,7 @@ class Moderation:
 
         await self.log_action(ctx, "warn", member=target, reason=warning, mod=ctx.author)
 
-    @command(, aliases=['prune', 'p'])
+    @command(aliases=['prune', 'p'])
     async def purge(self, ctx, count: int, *users: discord.Member):
         """Deletes messages en masse."""
 

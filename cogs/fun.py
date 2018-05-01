@@ -179,6 +179,8 @@ class Fun:
 
     @command(hidden=True)
     async def age(self, ctx, created: UserCreated):
+        """Sends the account creation date for a user / member"""
+
         await ctx.send(created)
 
     @command()
