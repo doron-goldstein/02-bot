@@ -66,10 +66,7 @@ class Moderation:
                 if c >= 4:  # too many images, max is 3
                     ctx.author = ctx.guild.me
                     await ctx.invoke(self.bot.get_command("mute"), ctx.message.author,
-                                     body=("Image / file spamming", None))
-                    await asyncio.sleep(5 * 60)
-                    await ctx.invoke(self.bot.get_command("unmute"), ctx.message.author,
-                                     reason="5 minutes have passed. Please refrain from spamming.")
+                                     body=("Image / file spamming", 5))
                     return
 
     async def on_message(self, message):
