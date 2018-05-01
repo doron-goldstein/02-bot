@@ -83,12 +83,17 @@ class ZeroTwo(commands.Bot):
         mute_query = """
             SELECT * FROM mute_states
         """
+        spamguard_query = """
+            SELECT channel_id FROM spamguard_blacklist
+        """
 
         async with self.pool.acquire() as conn:
             self.muted_roles = {g: r for g, r in await conn.fetch(role_query)}
             self.reaction_manager = {e: r for e, r in await conn.fetch(emoji_query)}
             self.config = {g: {'do_welcome': w, 'echo_mod_actions': m} for g, w, m in await conn.fetch(config_query)}
             self.muted_members = {r['member_id']: dict(r) for r in await conn.fetch(mute_query)}
+            self._spamguard_blacklist = [r['channel_id'] for r in await conn.fetch(spamguard_query)]
+
         await self.handle_mutes()
         print("Ready!")
         print(self.user.name)

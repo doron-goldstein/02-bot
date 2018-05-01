@@ -10,7 +10,8 @@ from discord.ext.commands import command
 class Moderation:
     def __init__(self, bot):
         self.bot = bot
-        self.log_chan = self.bot.get_channel(413010299776532490)
+        self.log_chan = bot.get_channel(413010299776532490)
+        self.spamguard_blacklist = bot._spamguard_blacklist
         self.embed_colors = {
             "kick": 0xffa500,
             "ban": 0xff0000,
@@ -52,25 +53,30 @@ class Moderation:
             role = discord.utils.get(channel.guild.roles, id=r_id)
             await channel.set_permissions(role, send_messages=False)
 
+    async def handle_spamguard(self, ctx):
+        if ctx.channel.id in self.spamguard_blacklist:
+            return
+
+        if ctx.attachments:
+            past = datetime.utcnow() - timedelta(minutes=0.5)  # search back for half a min
+            c = 0
+            async for m in ctx.history(after=past):
+                if m.attachments and m.author == ctx.author:
+                    c += 1
+                if c >= 4:  # too many images, max is 3
+                    ctx.author = ctx.guild.me
+                    await ctx.invoke(self.bot.get_command("mute"), ctx.author,
+                                     body=("Image / file spamming", None))
+                    await asyncio.sleep(5 * 60)
+                    await ctx.invoke(self.bot.get_command("unmute"), ctx.author,
+                                     reason="5 minutes have passed. Please refrain from spamming.")
+                    return
+
     async def on_message(self, message):
         if message.author.bot:
             return
-
-        if message.attachments:
-            past = datetime.utcnow() - timedelta(minutes=0.5)
-            channel = message.channel
-            c = 0
-            async for m in channel.history(after=past):
-                if m.attachments and m.author == message.author:
-                    c += 1
-                if c >= 4:
-                    ctx = await self.bot.get_context(message)
-                    ctx.author = ctx.guild.me
-                    await ctx.invoke(self.bot.get_command("mute"), message.author,
-                                     body=("Image / file spamming", None))
-                    await asyncio.sleep(5 * 60)
-                    await ctx.invoke(self.bot.get_command("unmute"), message.author,
-                                     reason="5 minutes have passed. Please refrain from spamming.")
+        ctx = self.bot.get_context(message)
+        await self.handle_spamguard(ctx)
 
     @command(hidden=True)  # this is actually horrid
     async def config(self, ctx):
@@ -111,6 +117,49 @@ class Moderation:
             """.format(config_index[int(msg.content)], config[config_index[int(msg.content)]], ctx.guild.id)
             await self.bot.pool.execute(query)
             await ctx.send(config_index[int(msg.content)] + " toggled.")
+
+    def _answer(arg):
+        ret = None
+        if arg.lower() in ['y', 'yes', 'true', 'on', 'enable']:
+            ret = True
+        elif arg.lower() in ['n', 'no', 'false', 'off', 'disable', 'stop']:
+            ret = False
+        return arg, ret
+
+    @command()
+    async def spamguard(self, ctx, state: _answer, channel: discord.TextChannel = None):
+        """Sets the state of the spamguard for a channel.
+
+        If no channel specified, defaults to current channel.
+        """
+
+        answer, state = state
+        channel = channel or ctx.channel
+        if state is None:
+            return await ctx.send(f"❗`{answer}` is not a valid argument! "
+                                  "Try something like: yes, no, true, false, on, off.`")
+
+        elif state:  # ENABLE
+            msg = f"Successfully enabled the spamguard in {channel.mention}."
+            if channel.id not in self.spamguard_blacklist:
+                return await ctx.send(msg)
+
+            query = """
+                DELETE FROM spamguard_blacklist WHERE channel_id = $1
+            """
+            await self.bot.pool.execute(query, channel.id)
+            self.spamguard_blacklist.remove(channel.id)
+
+        else:  # DISABLE
+            msg = f"Successfully disabled the spamguard in {channel.mention}."
+            if channel.id in self.spamguard_blacklist:
+                return await ctx.send(msg)
+
+            query = """
+                INSERT INTO spamguard_blacklist (channel_id) VALUES ($1)
+            """
+            await self.bot.pool.execute(query, channel.id)
+            self.spamguard_blacklist.append(channel.id)
 
     @command(hidden=True)
     async def lock(self, ctx):
