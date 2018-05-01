@@ -75,7 +75,7 @@ class Moderation:
     async def on_message(self, message):
         if message.author.bot:
             return
-        ctx = self.bot.get_context(message)
+        ctx = await self.bot.get_context(message)
         await self.handle_spamguard(ctx)
 
     @command()  # this is actually horrid
