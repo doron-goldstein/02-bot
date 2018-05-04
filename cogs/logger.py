@@ -1,4 +1,5 @@
 import discord
+from datetime import datetime
 
 
 class Logger:
@@ -15,7 +16,8 @@ class Logger:
         f = None
         if message.author.bot:
             return
-        embed = discord.Embed(title="Message " + action, description=f"", color=self.colors[action])
+        embed = discord.Embed(title="Message " + action, description=f"",
+                              color=self.colors[action], timestamp=datetime.now())
         embed.set_author(name=f'{message.author} / {message.author.id}', icon_url=message.author.avatar_url)
         embed.add_field(name="Channel", value=message.channel.mention)
         if message.content:

@@ -131,7 +131,7 @@ class ZeroTwo(commands.Bot):
             member = guild.get_member(m_id)
             cog = self.get_cog('Moderation')
             await cog._do_unmute(member, reason=reason, mod=mod, guild=guild)
-            embed = discord.Embed(title="Member Auto-unmuted")
+            embed = discord.Embed(title="Member Auto-unmuted", timestamp=datetime.now())
             embed.add_field(name="Original Moderator", value=str(original_mod))
             embed.set_author(name=f"{member} / {member.id}", icon_url=member.avatar_url)
             if guild == cog.log_chan.guild:
