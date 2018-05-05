@@ -73,8 +73,8 @@ class Roles:
             .set_author(name=f"{ctx.author} / {ctx.author.id}", icon_url=ctx.author.avatar_url) \
             .set_footer(text=ctx.author.id)
         msg = await channel.send(embed=embed)
-        await msg.add_reaction('✔️')
-        await msg.add_reaction('❎')
+        await msg.add_reaction('✅')
+        await msg.add_reaction('❌')
 
     @request.error
     async def req_error(self, ctx, err):
@@ -84,7 +84,7 @@ class Roles:
             raise err
 
     async def handle_request(self, author, msg_id, emoji):
-        emojis = ('✔️', '❎')
+        emojis = ('✅', '❌')
 
         perms = author.guild_permissions
         if not (perms.kick_members and perms.ban_members) or author.id != self.bot.owner_id:
@@ -106,11 +106,11 @@ class Roles:
         role = discord.utils.get(channel.guild.roles, name=r_name)
         embed = msg.embeds[0]
         requester = channel.guild.get_member(int(embed.footer.text))
-        if emoji.name == '✔️':
+        if emoji.name == '✅':
             embed.color = discord.Color.green()
             await requester.add_role(role)
             await msg.edit(embed=embed)
-        elif emoji.name == '❎':
+        elif emoji.name == '❌':
             embed.color = discord.Color.red()
             await msg.edit(embed=embed)
         await msg.clear_reactions()
