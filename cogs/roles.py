@@ -68,7 +68,7 @@ class Roles:
         if role.name not in ('Parasites', 'Pollination', 'Verified'):
             return await ctx.send("You can't request that role, darling!")
 
-        embed = discord.Embed(title="Role requested!", timestamp=datetime.now(), color=discord.Color.purple) \
+        embed = discord.Embed(title="Role requested!", timestamp=datetime.now(), color=discord.Color.purple()) \
             .add_field(name='Role', value=role.name) \
             .set_author(name=f"{ctx.author} / {ctx.author.id}", icon_url=ctx.author.avatar_url) \
             .set_footer(text=ctx.author.id)
@@ -105,11 +105,11 @@ class Roles:
         embed = msg.embeds[0]
         requester = channel.guild.get_member(int(embed.footer.text))
         if emoji.name == '✔️':
-            embed.color = discord.Color.green
+            embed.color = discord.Color.green()
             await requester.add_role(role)
             await msg.edit(embed=embed)
         elif emoji.name == '❎':
-            embed.color = discord.Color.red
+            embed.color = discord.Color.red()
             await msg.edit(embed=embed)
         await msg.clear_reactions()
 
