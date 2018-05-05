@@ -87,8 +87,9 @@ class Roles:
         emojis = ('✅', '❌')
 
         perms = author.guild_permissions
-        if not (perms.kick_members and perms.ban_members) or author.id != self.bot.owner_id:
-            return
+        if not (perms.kick_members and perms.ban_members):
+            if author.id != self.bot.owner_id:
+                return
 
         channel = self.bot.get_channel(self.req_channel)
         if channel is None:
