@@ -75,6 +75,7 @@ class Roles:
         msg = await channel.send(embed=embed)
         await msg.add_reaction('✅')
         await msg.add_reaction('❌')
+        await ctx.send("Request sent!")
 
     @request.error
     async def req_error(self, ctx, err):
