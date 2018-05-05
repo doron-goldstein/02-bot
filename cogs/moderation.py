@@ -472,11 +472,12 @@ class Moderation:
         warnings = rec['warning_count']
         description = 'For more info on each field, do `>check Target#1234 field`.\n' \
                       f'For example, `>check {target} bans`'
-        embed = discord.Embed(title=f"Moderation stats for `{target}`", description=description) \
+        embed = discord.Embed(title=f"Moderation stats", description=description) \
             .add_field(name="Total Warnings", value=warnings, inline=False) \
             .add_field(name="Total Mutes", value=mutes, inline=False) \
             .add_field(name="Total Kicks", value=kicks, inline=False) \
-            .add_field(name="Total Bans", value=bans, inline=False)
+            .add_field(name="Total Bans", value=bans, inline=False) \
+            .set_author(name=f"{target} / {target.id}", icon_url=target.avatar_url)
         await ctx.send(embed=embed)
 
 
