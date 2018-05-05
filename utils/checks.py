@@ -3,6 +3,7 @@ from discord.ext import commands
 
 FRANXX_ID = 391483719803994113
 BOT_CHANNEL = 391490499527311361
+DEV_TESTING = 418976680363687936
 
 
 def super_check(check):
@@ -17,7 +18,7 @@ def restricted():
     """Restrict commands to #bot_channel"""
     async def predicate(ctx):
         if ctx.guild.id == FRANXX_ID:
-            return ctx.channel.id == BOT_CHANNEL
+            return ctx.channel.id in (BOT_CHANNEL, DEV_TESTING)
         return True
     return commands.check(predicate)
 
