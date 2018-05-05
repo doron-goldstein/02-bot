@@ -353,7 +353,7 @@ class Moderation:
 
     @command()
     async def warn(self, ctx, target: discord.Member, *, warning=None):
-        """Warns a member. The warning will be send to said member in a DM."""
+        """Warns a member. The warning will be sent to said member in a DM."""
 
         await ctx.message.delete()
         try:
