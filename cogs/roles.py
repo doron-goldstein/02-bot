@@ -80,6 +80,8 @@ class Roles:
     async def req_error(self, ctx, err):
         if isinstance(err, commands.BadArgument):
             await ctx.send("Couldn't find that role! Did you misspell the name? It's case-sensitive!")
+        else:
+            raise err
 
     async def handle_request(self, author, msg_id, emoji):
         emojis = ('✔️', '❎')
