@@ -109,7 +109,7 @@ class Roles:
         requester = channel.guild.get_member(int(embed.footer.text))
         if emoji.name == '✅':
             embed.color = discord.Color.green()
-            await requester.add_role(role)
+            await requester.add_roles(role)
             await msg.edit(embed=embed)
         elif emoji.name == '❌':
             embed.color = discord.Color.red()
