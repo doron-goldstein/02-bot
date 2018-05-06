@@ -59,10 +59,11 @@ class Logger:
 
         query = """
             INSERT INTO usernames (member_id, usernames)
-            VALUES ($1, array[$3, $2])
+            VALUES ($1, ARRAY[$3, $2])
             ON CONFLICT (member_id)
             DO UPDATE
                 SET usernames = array_append(usernames.usernames, $2)
+                WHERE NOT usernames.usernames @> ARRAY[$2]
         """
         await self.bot.pool.execute(query, before.id, after.name, before.name)
 
