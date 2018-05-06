@@ -7,6 +7,7 @@ class Logger:
         self.bot = bot
         self.edit_chan = bot.get_channel(413889551740960790)
         self.del_chan = bot.get_channel(427178643983433740)
+        self.name_chan = bot.get_channel(442424612882612235)
         self.colors = {
             "edit": discord.Color.teal(),
             "delete": discord.Color.dark_red()
@@ -16,8 +17,7 @@ class Logger:
         f = None
         if message.author.bot:
             return
-        embed = discord.Embed(title="Message " + action, description=f"",
-                              color=self.colors[action], timestamp=datetime.now())
+        embed = discord.Embed(title="Message " + action, color=self.colors[action], timestamp=datetime.now())
         embed.set_author(name=f'{message.author} / {message.author.id}', icon_url=message.author.avatar_url)
         embed.add_field(name="Channel", value=message.channel.mention)
         if message.content:
@@ -43,6 +43,19 @@ class Logger:
         if old.content != new.content:
             if old.guild == self.del_chan.guild:  # franxx only
                 await self.log_message("edit", old, new)
+
+    async def on_member_update(self, before, after):
+        if before.name == after.name:
+            return
+        if before.guild != self.name_chan.guild:
+            return
+
+        embed = discord.embed(title="Username change", color=discord.Color.dark_orange()) \
+            .add_field(name="Before", value=before.name) \
+            .add_field(name="After", value=after.name) \
+            .set_author(name=after.name, icon_url=after.icon_url)
+
+        await self.name_chan.send(embed=embed)
 
 
 def setup(bot):
