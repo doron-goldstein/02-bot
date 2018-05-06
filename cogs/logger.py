@@ -53,7 +53,7 @@ class Logger:
         embed = discord.Embed(title="Username change", color=discord.Color.dark_orange()) \
             .add_field(name="Before", value=before.name) \
             .add_field(name="After", value=after.name) \
-            .set_author(name=after.name, icon_url=after.avatar_url)
+            .set_author(name=f"{after} / {after.id}", icon_url=after.avatar_url)
 
         await self.name_chan.send(embed=embed)
 
