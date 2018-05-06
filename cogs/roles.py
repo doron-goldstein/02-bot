@@ -84,7 +84,7 @@ class Roles:
         else:
             raise err
 
-    async def handle_request(self, author, msg_id, emoji):
+    async def handle_request(self, author, guild, msg_id, emoji):
         emojis = ('✅', '❌')
 
         perms = author.guild_permissions
@@ -92,7 +92,7 @@ class Roles:
             if author.id != self.bot.owner_id:
                 return
 
-        channel = self.bot.get_channel(self.req_channel)
+        channel = guild.get_channel(self.req_channel)
         if channel is None:
             return
         if emoji.name not in emojis:
@@ -105,9 +105,9 @@ class Roles:
             return
 
         r_name = msg.embeds[0].fields[0].value
-        role = discord.utils.get(channel.guild.roles, name=r_name)
+        role = discord.utils.get(guild.roles, name=r_name)
         embed = msg.embeds[0]
-        requester = channel.guild.get_member(int(embed.footer.text))
+        requester = guild.get_member(int(embed.footer.text))
         if emoji.name == '✅':
             embed.color = discord.Color.green()
             await requester.add_roles(role)
@@ -124,7 +124,7 @@ class Roles:
     async def on_raw_reaction_add(self, event):
         guild = self.bot.get_guild(event.guild_id)
         member = guild.get_member(event.user_id)
-        await self.handle_request(member, event.message_id, event.emoji)
+        await self.handle_request(member, guild, event.message_id, event.emoji)
         if event.message_id != self.msg_id:
             return
 
