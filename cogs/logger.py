@@ -66,5 +66,6 @@ class Logger:
         """
         await self.bot.pool.execute(query, before.id, after.name, before.name)
 
+
 def setup(bot):
     bot.add_cog(Logger(bot))
