@@ -50,7 +50,7 @@ class Logger:
         if before.guild != self.name_chan.guild:
             return
 
-        embed = discord.embed(title="Username change", color=discord.Color.dark_orange()) \
+        embed = discord.Embed(title="Username change", color=discord.Color.dark_orange()) \
             .add_field(name="Before", value=before.name) \
             .add_field(name="After", value=after.name) \
             .set_author(name=after.name, icon_url=after.icon_url)
