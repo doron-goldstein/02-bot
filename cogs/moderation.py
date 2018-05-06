@@ -481,7 +481,6 @@ class Moderation:
         await ctx.send(embed=embed)
 
     @command()
-    @super
     async def lookup(self, ctx, member: discord.Member):
         """Show a list of a member's previous usernames."""
         query = """
