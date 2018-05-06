@@ -112,6 +112,10 @@ class Roles:
             embed.color = discord.Color.green()
             await requester.add_roles(role)
             await msg.edit(embed=embed)
+            try:
+                await requester.send(f"Your request has been accepted! You now have `{role.name}`")
+            except:  # give up if we cant send  # noqa
+                pass
         elif emoji.name == '❌':
             embed.color = discord.Color.red()
             await msg.edit(embed=embed)
