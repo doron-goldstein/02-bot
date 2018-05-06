@@ -480,6 +480,27 @@ class Moderation:
             .set_author(name=f"{target} / {target.id}", icon_url=target.avatar_url)
         await ctx.send(embed=embed)
 
+    @command()
+    @super
+    async def lookup(self, ctx, member: discord.Member):
+        """Show a list of a member's previous usernames."""
+        query = """
+            SELECT usernames FROM usernames WHERE member_id = $1
+        """
+        r = await self.bot.pool.fetchrow(query, member.id)
+        to_send = "Known Usernames:\n"
+        if r is None:
+            await ctx.send(to_send + member.name)
+        else:
+            fmt = ""
+            for name in r['usernames']:
+                fmt += name + "\n"
+            if len(fmt) >= 2000:
+                url = await self.bot.make_haste(fmt)
+                await ctx.send(to_send + url)
+            else:
+                await ctx.send(to_send + fmt)
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
