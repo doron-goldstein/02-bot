@@ -57,6 +57,14 @@ class Logger:
 
         await self.name_chan.send(embed=embed)
 
+        query = """
+            INSERT INTO usernames (member_id, usernames)
+            VALUES ($1, array[$3, $2])
+            ON CONFLICT (member_id)
+            DO UPDATE
+                SET usernames = array_append(usernames.usernames, $2)
+        """
+        await self.bot.pool.execute(query, before.id, after.name, before.name)
 
 def setup(bot):
     bot.add_cog(Logger(bot))
