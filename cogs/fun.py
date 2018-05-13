@@ -2,6 +2,7 @@ import json
 import os
 import random
 from io import BytesIO
+import time
 
 import discord
 from discord.ext import commands
@@ -14,6 +15,8 @@ IMAGES_URL = BASE_URL + "/images"
 RANDOM_URL = IMAGES_URL + "/random"
 GENERATE_URL = BASE_URL + "/auto-image"
 SHIP_URL = GENERATE_URL + "/love-ship"
+PICTURE_URL_1 = "https://staging.weeb.sh/auto-image-v2/template/i-love-this-picture"
+PICTURE_URL_2 = "https://staging.weeb.sh/auto-image-v2/template/zero-two"
 
 
 class Fun:
@@ -33,6 +36,13 @@ class Fun:
             90: "How come you're not all over eachother already!? You're a perfect couple!",
             100: "This is how the gods meet their partners. It'd be a shame for mankind if you two don't get together."
         }
+
+    async def generate_picture(self, url):
+        body = json.dumps({'image': url})
+        headers = {'Authorization': self.bot.img_auth, 'Content-Type': 'application/json'}
+        resp = await self.bot.session.post(random.choice([PICTURE_URL_1, PICTURE_URL_2]), headers=headers, data=body)
+        f = discord.File(BytesIO(await resp.read()), "picture.png")
+        return f
 
     async def generate_ship(self, m1, m2):
         body = json.dumps({"targetOne": m1.avatar_url, "targetTwo": m2.avatar_url})
@@ -155,6 +165,15 @@ class Fun:
 
         embed = await self.make_embed(f"{ctx.author.name} cuddled {user.name}!", 'cuddle')
         await ctx.send(embed=embed)
+
+    @command()
+    async def picture(self, ctx, target: discord.Member = None):
+        """Does Zero Two like this picture?"""
+
+        target = target or ctx.author
+        async with ctx.typing():
+            f = await self.generate_picture(target.avatar_url_as(format="png", size=256))
+        await ctx.send(file=f)
 
     class UserCreated(UserConverter):
         async def convert(self, ctx, arg):
