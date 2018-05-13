@@ -121,6 +121,10 @@ class Roles:
         elif emoji.name == '❌':
             embed.color = discord.Color.red()
             await msg.edit(embed=embed)
+            try:
+                await requester.send(f"Your request for `{role.name}` was denied. Please try again later.")
+            except:  # rip  # noqa
+                pass
         await msg.clear_reactions()
 
     async def on_raw_reaction_add(self, event):
