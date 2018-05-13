@@ -167,6 +167,7 @@ class Fun:
         await ctx.send(embed=embed)
 
     @command()
+    @restricted()
     async def picture(self, ctx, target: discord.Member = None):
         """Does Zero Two like this picture?"""
 
