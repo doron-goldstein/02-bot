@@ -70,6 +70,8 @@ class Roles:
 
         embed = discord.Embed(title="Role requested!", timestamp=datetime.now(), color=discord.Color.purple()) \
             .add_field(name='Role', value=role.name) \
+            .add_field(name="Joined at", value=ctx.author.joined_at.strftime("%Y-%m-%d %H:%M")) \
+            .add_field(name="Account Created", value=ctx.author.created_at.strftime("%Y-%m-%d %H:%M")) \
             .set_author(name=f"{ctx.author} / {ctx.author.id}", icon_url=ctx.author.avatar_url) \
             .set_footer(text=ctx.author.id)
         msg = await channel.send(embed=embed)
