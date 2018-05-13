@@ -66,7 +66,10 @@ class Roles:
             return
 
         if role.name not in ('Parasites', 'Pollination', 'Verified'):
-            return await ctx.send("You can't request that role, darling!")
+            return await ctx.send("You can't request that role, Darling!")
+
+        if role in ctx.author.roles:
+            return await ctx.send("You already have that role, Darling!")
 
         embed = discord.Embed(title="Role requested!", timestamp=datetime.now(), color=discord.Color.purple()) \
             .add_field(name='Role', value=role.name) \
