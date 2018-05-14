@@ -2,7 +2,6 @@ import json
 import os
 import random
 from io import BytesIO
-import time
 
 import discord
 from discord.ext import commands

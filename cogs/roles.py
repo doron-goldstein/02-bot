@@ -3,7 +3,7 @@ from utils.checks import restricted
 
 import discord
 from discord.ext import commands
-
+from discord.ext.commands import BucketType, cooldown
 
 class Roles:
     def __init__(self, bot):
@@ -52,6 +52,7 @@ class Roles:
         await ctx.send(f"Added `{emoji_name}` as an assignable role!")
 
     @restricted()
+    @cooldown(1, 86400, BucketType.user)
     @commands.command()
     async def request(self, ctx, role: discord.Role):
         """Request a special role.
