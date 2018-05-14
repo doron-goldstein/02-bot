@@ -1,4 +1,5 @@
 from discord.ext import commands
+from utils.checks import mods_only
 
 
 class Errors:
@@ -19,6 +20,8 @@ class Errors:
             await ctx.send(f"This command cannot be used in DMs.")
 
         elif isinstance(err, commands.CommandOnCooldown):
+            if mods_only(ctx):
+                return await ctx.reinvoke()
             await ctx.send(err.args[0], delete_after=5)
 
         elif isinstance(err, commands.MissingRequiredArgument):
