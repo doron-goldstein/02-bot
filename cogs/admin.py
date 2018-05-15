@@ -25,8 +25,8 @@ class Admin:
             self.bot.unload_extension(ext)
             self.bot.load_extension(ext)
         except Exception as e:
-            exc = f'{type(e).__name__}: {e}'
-            await ctx.author.send(f"Failed to reload cog: `{ext}`\n    {exc}")
+            tb = '```' + ''.join(format_exception(None, e, e.__traceback__)) + '```'
+            await ctx.author.send(f"Failed to reload cog: `{ext}`\n" + tb)
         else:
             await ctx.message.add_reaction("\N{OK HAND SIGN}")
 
