@@ -23,6 +23,7 @@ class Errors:
             if mods_only(ctx):
                 return await ctx.reinvoke()
             await ctx.send(err.args[0], delete_after=5)
+            await ctx.message.add_reaction("\N{HOURGLASS}")
 
         elif isinstance(err, commands.MissingRequiredArgument):
             await ctx.send(err.args[0])
