@@ -88,7 +88,6 @@ class Roles:
     async def req_error(self, ctx, err):
         if isinstance(err, commands.BadArgument):
             await ctx.send("Couldn't find that role! Did you misspell the name? It's case-sensitive!")
-            await ctx.command.reset_cooldown(ctx)
         else:
             await self.bot.error_handler(ctx, err)
 
