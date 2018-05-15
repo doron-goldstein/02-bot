@@ -3,7 +3,7 @@ from utils.checks import restricted
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown
+from discord.ext.commands import BucketType, Cooldown
 
 
 class Roles:
@@ -53,20 +53,18 @@ class Roles:
         await ctx.send(f"Added `{emoji_name}` as an assignable role!")
 
     @restricted()
-    @cooldown(1, 86400, BucketType.user)
-    @commands.command()
-    async def request(self, ctx, role: discord.Role):
+    @commands.group()
+    async def request(self, ctx):
         """Request a special role.
-        Valid roles:
-         - Parasites
-         - Pollination
-         - Verified
         More info on each role is in the rules.
         """
-        channel = ctx.guild.get_channel(self.req_channel)
+
+    async def request_body(ctx):
+        channel = ctx.guild.get_channel(ctx.bot.get_cog('Roles').req_channel)
         if channel is None:
             return
 
+        role = discord.utils.get(ctx.guild.roles, name=ctx.command.name)
         if role.name not in ('Parasites', 'Pollination', 'Verified'):
             return await ctx.send("You can't request that role, Darling!")
 
@@ -84,12 +82,10 @@ class Roles:
         await msg.add_reaction('❌')
         await ctx.send("Request sent!")
 
-    @request.error
-    async def req_error(self, ctx, err):
-        if isinstance(err, commands.BadArgument):
-            await ctx.send("Couldn't find that role! Did you misspell the name? It's case-sensitive!")
-        else:
-            await self.bot.error_handler(ctx, err)
+    request_body.__commands_cooldown__ = Cooldown(1, 86400, BucketType.user)
+    for r_name in ['Parasites', 'Pollination', 'Verified']:
+        request.command(r_name, aliases=[r_name.lower()])(request_body)
+        print(1)
 
     async def handle_request(self, author, guild, msg_id, emoji):
         emojis = ('✅', '❌')
@@ -131,6 +127,7 @@ class Roles:
             except:  # rip  # noqa
                 pass
         await msg.clear_reactions()
+
 
     async def on_raw_reaction_add(self, event):
         guild = self.bot.get_guild(event.guild_id)
