@@ -82,8 +82,8 @@ class Roles:
         await msg.add_reaction('❌')
         await ctx.send("Request sent!")
 
-    request_body.__commands_cooldown__ = Cooldown(1, 86400, BucketType.user)
     for r_name in ['Parasites', 'Pollination', 'Verified']:
+        request_body.__commands_cooldown__ = Cooldown(1, 86400, BucketType.user)
         request.command(r_name, aliases=[r_name.lower()])(request_body)
 
     async def handle_request(self, author, guild, msg_id, emoji):
