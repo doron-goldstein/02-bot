@@ -86,6 +86,8 @@ class Fun:
     async def rand_error(self, ctx, err):
         if isinstance(err, commands.BadArgument):
             return await ctx.send("I can't recognize who that is! Did you misspell their name, Darling?")
+        else:
+            await self.bot.error_handler(ctx, err)
 
     @command()
     @restricted()

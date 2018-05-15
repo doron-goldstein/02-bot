@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
+
 class Roles:
     def __init__(self, bot):
         self.bot = bot
@@ -88,7 +89,7 @@ class Roles:
         if isinstance(err, commands.BadArgument):
             await ctx.send("Couldn't find that role! Did you misspell the name? It's case-sensitive!")
         else:
-            raise err
+            await self.bot.error_handler(ctx, err)
 
     async def handle_request(self, author, guild, msg_id, emoji):
         emojis = ('✅', '❌')

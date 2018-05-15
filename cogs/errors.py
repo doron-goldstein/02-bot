@@ -7,8 +7,8 @@ class Errors:
         self.bot = bot
 
     async def on_command_error(self, ctx, err):
-        if hasattr(ctx.command, 'on_error'):
-            return
+        # if hasattr(ctx.command, 'on_error'):  # should be ok to remove this
+        #     return
 
         if isinstance(err, commands.CommandNotFound):
             return

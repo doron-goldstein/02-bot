@@ -107,6 +107,7 @@ class ZeroTwo(commands.Bot):
             except Exception as e:
                 exc = f'{type(e).__name__}: {e}'
                 print(f'Failed to load extension {ext}\n{exc}')
+        self.error_handler = self.get_cog('Errors').on_command_error
         print("~-~-~-~")
 
     async def handle_mutes(self):
