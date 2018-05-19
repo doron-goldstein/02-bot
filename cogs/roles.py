@@ -127,7 +127,6 @@ class Roles:
                 pass
         await msg.clear_reactions()
 
-
     async def on_raw_reaction_add(self, event):
         guild = self.bot.get_guild(event.guild_id)
         member = guild.get_member(event.user_id)
