@@ -65,7 +65,8 @@ class Moderation:
                     c += 1
                 if c >= 4:  # too many images, max is 3
                     ctx.author = ctx.guild.me
-                    if self.bot.muted_members[ctx.author.id]['muted']:
+                    state = self.bot.muted_members.get(ctx.author.id)
+                    if state and state['muted']:
                         return
                     await ctx.invoke(self.bot.get_command("mute"), ctx.message.author,
                                      body=("Image / file spamming", 5))
