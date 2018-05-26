@@ -237,13 +237,25 @@ class Fun:
 
     @command(aliases=["makechain", "channelchain", "makemessage"])
     @super_check(mods_only)
-    async def scramble(self, ctx, channel: discord.TextChannel = None):
+    async def scramble(self, ctx, channel: discord.TextChannel = None, *members: discord.Member):
         """Generates a message based on the last 1000 messages in a specified channel
         (or the current one if none was given).
         """
         channel = channel or ctx.channel
         async with ctx.typing():
-            msgs = [m.clean_content async for m in channel.history(limit=1000)]
+            if not members:
+                msgs = [m.clean_content async for m in channel.history(limit=1000)]
+            else:
+                msgs = []
+                c = 0
+                async for m in channel.history(limit=None):
+                    if m.author not in members:
+                        continue
+                    msgs.append(m.clean_content)
+                    c += 1
+                    if c == 1000:
+                        break
+
             msg = await self.bot.loop.run_in_executor(None, self.generate_message, " ".join(msgs))
         if len(msg) >= 2000:
             await ctx.send("Result was too large! Posting a part of it.")
