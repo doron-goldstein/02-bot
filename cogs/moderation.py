@@ -503,6 +503,12 @@ class Moderation:
             else:
                 await ctx.send(to_send + fmt)
 
+    @command()
+    async def remove(self, ctx, member: discord.Member, role: discord.Role):
+        await member.remove_roles(role)
+        if self.bot.config[ctx.guild.id]['echo_mod_actions']:
+            await ctx.send(f"Role `{role}` has been removed from `{member}` by `{ctx.author}`.")
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
