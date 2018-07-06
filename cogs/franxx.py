@@ -67,12 +67,10 @@ class FranXX:
 
         air_time = self.get_formatted_time("Saturday", hour=23, minute=30)
         crunchy = self.get_formatted_time("Saturday", hour=23, minute=30, delta=1.5)
-        preview = self.get_formatted_time("Thursday", hour=18, minute=0)
 
         embed = discord.Embed(title="Darling in the FranXX", color=0x0066CC)
         embed.add_field(name="Air Time", value=air_time, inline=False)
         embed.add_field(name="Crunchyroll Release", value=crunchy)
-        embed.add_field(name="Episode Preview", value=preview)
         embed.set_footer(text='Hype Up Bois')
         embed.set_thumbnail(url="https://myanimelist.cdn-dena.com/images/anime/1614/90408.jpg")
         await ctx.send(embed=embed)
