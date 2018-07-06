@@ -69,9 +69,15 @@ class FranXX:
         crunchy = self.get_formatted_time("Saturday", hour=23, minute=30, delta=1.5)
 
         embed = discord.Embed(title="Darling in the FranXX", color=0x0066CC)
-        embed.add_field(name="Air Time", value=air_time, inline=False)
-        embed.add_field(name="Crunchyroll Release", value=crunchy)
         embed.set_footer(text='Hype Up Bois')
+
+        if not int(air_time[0]) > 1:
+            embed.add_field(name="Air Time", value=air_time, inline=False)
+        if not int(crunchy[0]) > 1:
+            embed.add_field(name="Crunchyroll Release", value=crunchy)
+        if len(embed.fields) == 0:
+            embed.description = "The show is over!"
+            embed.set_footer(text=':(')
         embed.set_thumbnail(url="https://myanimelist.cdn-dena.com/images/anime/1614/90408.jpg")
         await ctx.send(embed=embed)
 
