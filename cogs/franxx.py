@@ -1,7 +1,4 @@
-from datetime import datetime, timedelta
-
 import discord
-import pytz
 from discord.ext import commands
 from discord.ext.commands import cooldown
 from discord.ext.commands.cooldowns import BucketType
@@ -16,68 +13,13 @@ class FranXX:
         self.greet_log = bot.get_channel(392444419535667200)
         self.welcome_emoji = discord.utils.get(bot.emojis, name="welcome")
 
-    def get_next_weekday(self, startdate: datetime, day: str) -> datetime:
-        """Get the next date per day of the week"""
-
-        days = {
-            "Monday": 0,
-            "Tuesday": 1,
-            "Wednesday": 2,
-            "Thursday": 3,
-            "Friday": 4,
-            "Saturday": 5,
-            "Sunday": 6
-        }
-        weekday = days[day]
-        days = timedelta((7 + weekday - startdate.weekday()) % 7)
-        return startdate + days
-
-    def get_remaining(self, day: str, *, hour: int, minute: int) -> timedelta:
-        """Returns the time between now and and the next `day` at `hour`:`minute`"""
-
-        time_now = datetime.now(pytz.timezone("Japan")).replace(tzinfo=None)
-        air_date = self.get_next_weekday(time_now, day)
-        show_airs = air_date.replace(hour=hour, minute=minute)
-
-        remaining = show_airs - time_now
-        return remaining
-
-    def get_formatted_time(self, day: str, *, hour: int, minute: int, delta=0) -> str:
-        """Format time until `day` at `hour`:`minute`"""
-
-        remaining = self.get_remaining(day, hour=hour, minute=minute) + timedelta(hours=delta)
-
-        days = remaining.days
-        hours, rem = divmod(remaining.seconds, 3600)
-        minutes, seconds = divmod(rem, 60)
-
-        fmt = f' Days, {hours} Hours, and {minutes} Minutes.'
-        if days < 0:
-            time = '6' + fmt
-        elif days >= 7:
-            time = '0' + fmt
-        else:
-            time = str(days) + fmt
-        return time
-
     @cooldown(1, 120, BucketType.channel)
     @commands.command(aliases=["episode", "nextepisode", "airtime"])
     async def next(self, ctx):
         """Countdown to next episode of the anime."""
-
-        air_time = self.get_formatted_time("Saturday", hour=23, minute=30)
-        crunchy = self.get_formatted_time("Saturday", hour=23, minute=30, delta=1.5)
-
         embed = discord.Embed(title="Darling in the FranXX", color=0x0066CC)
-        embed.set_footer(text='Hype Up Bois')
-
-        if not int(air_time[0]) > 1:
-            embed.add_field(name="Air Time", value=air_time, inline=False)
-        if not int(crunchy[0]) > 1:
-            embed.add_field(name="Crunchyroll Release", value=crunchy)
-        if len(embed.fields) == 0:
-            embed.description = "The show is over!"
-            embed.set_footer(text=':(')
+        embed.description = "The show is over!"
+        embed.set_footer(text=':(')
         embed.set_thumbnail(url="https://myanimelist.cdn-dena.com/images/anime/1614/90408.jpg")
         await ctx.send(embed=embed)
 
