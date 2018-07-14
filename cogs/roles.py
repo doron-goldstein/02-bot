@@ -65,7 +65,7 @@ class Roles:
             return
 
         role = discord.utils.get(ctx.guild.roles, name=ctx.command.name)
-        if role.name not in ('Parasites', 'Pollination', 'Verified'):
+        if role.name not in ('Parasites', 'Verified'):
             return await ctx.send("You can't request that role, Darling!")
 
         if role in ctx.author.roles:
@@ -82,7 +82,7 @@ class Roles:
         await msg.add_reaction('❌')
         await ctx.send("Request sent!")
 
-    for r_name in ['Parasites', 'Pollination', 'Verified']:
+    for r_name in ['Parasites', 'Verified']:
         request_body.__commands_cooldown__ = Cooldown(1, 86400, BucketType.user)
         request.command(r_name, aliases=[r_name.lower()])(request_body)
 
