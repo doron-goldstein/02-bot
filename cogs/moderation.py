@@ -32,6 +32,9 @@ class Moderation:
         return (perms.kick_members and perms.ban_members) or ctx.author.id == 111158853839654912
 
     async def log_action(self, ctx, action, *, member, reason=None, mod=None, minutes=None):
+        _action = action
+        if action in ('gag', 'sleep'):
+            action = 'mute'
         embed = discord.Embed(title=f"Member {action}", description=reason)
         embed.color = self.embed_colors[action]
         embed.timestamp = datetime.now()
@@ -44,8 +47,11 @@ class Moderation:
         if ctx.guild.id == 391483719803994113:
             await self.log_chan.send(embed=embed)
         if self.bot.config[ctx.guild.id]['echo_mod_actions']:
-            action += self.converter[action]
-            await ctx.send(f"`{member}` has been {action} by {mod}.")
+            if _action == "sleep":
+                await ctx.send(f"`{member}` has been put to sleep by {mod}.")
+            else:
+                action += self.converter[action]
+                await ctx.send(f"`{member}` has been {action} by {mod}.")
 
     async def on_guild_channel_create(self, channel):
         if channel.guild.id in self.bot.muted_roles:
@@ -249,7 +255,7 @@ class Moderation:
             return reason, int(minutes)
         return reason, int(minutes) + int(hours) * 60
 
-    @command(aliases=['gag'], usage="<target> [time] [reason]")
+    @command(aliases=['gag', 'sleep'], usage="<target> [time] [reason]")
     async def mute(self, ctx, target: discord.Member, *, body: parse_mute = None):
         """Mutes a member. The reason will be sent as a notice to said member in a DM."""
 
@@ -311,7 +317,7 @@ class Moderation:
                                       f"Mute Reason:\n{reason}")
             except:  # noqa
                 pass
-        await self.log_action(ctx, "mute", member=target, reason=reason, mod=ctx.author, minutes=minutes)
+        await self.log_action(ctx, ctx.invoked_with, member=target, reason=reason, mod=ctx.author, minutes=minutes)
 
     async def _do_unmute(self, target, *, reason, mod, guild):
         r_id = self.bot.muted_roles[guild.id]
