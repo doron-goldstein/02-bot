@@ -12,6 +12,7 @@ class Moderation:
         self.bot = bot
         self.log_chan = bot.get_channel(413010299776532490)
         self.spamguard_blacklist = bot._spamguard_blacklist
+        self.msg_num = 0
         self.embed_colors = {
             "kick": 0xffa500,
             "ban": 0xff0000,
@@ -78,11 +79,20 @@ class Moderation:
                                      body=("Image / file spamming", 5))
                     return
 
+    async def handle_scrambler(self, ctx):  # im not proud
+        if ctx.channel.id != 391483720244264961:
+            return
+        self.msg_num += 1
+        if self.msg_num >= 5000:
+            self.msg_num = 0
+            await ctx.invoke(self.bot.get_command("scramble"))
+
     async def on_message(self, message):
         if message.author.bot:
             return
         ctx = await self.bot.get_context(message)
         await self.handle_spamguard(ctx)
+        await self.handle_scrambler(ctx)
 
     @command()  # this is actually horrid
     async def config(self, ctx):
