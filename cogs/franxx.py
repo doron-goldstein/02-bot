@@ -43,7 +43,7 @@ class FranXX:
         if state:
             if state.get('muted'):
                 r_id = self.bot.muted_roles.get(member.guild.id)
-                await member.add_roles(discord.utils.get(member.guild.roles, id=r_id))
+                await member.add_roles(member.guild.get_role(r_id))
 
         if self.bot.config[member.guild.id]['do_welcome']:
             m = await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "

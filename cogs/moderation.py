@@ -57,7 +57,7 @@ class Moderation:
     async def on_guild_channel_create(self, channel):
         if channel.guild.id in self.bot.muted_roles:
             r_id = self.bot.muted_roles[channel.guild.id]
-            role = discord.utils.get(channel.guild.roles, id=r_id)
+            role = channel.guild.get_role(r_id)
             await channel.set_permissions(role, send_messages=False)
 
     async def handle_spamguard(self, ctx):
@@ -287,7 +287,7 @@ class Moderation:
             """
             await self.bot.pool.execute(query, ctx.guild.id, role.id)
 
-        role = discord.utils.get(ctx.guild.roles, id=r_id)
+        role = ctx.guild.get_role(r_id)
         await target.add_roles(role)
 
         timeout = datetime.utcnow() + timedelta(minutes=minutes) if minutes else None
@@ -332,7 +332,7 @@ class Moderation:
     async def _do_unmute(self, target, *, reason, mod, guild):
         r_id = self.bot.muted_roles[guild.id]
         if r_id:
-            role = discord.utils.get(guild.roles, id=r_id)
+            role = guild.get_role(r_id)
             if role:
                 await target.remove_roles(role)
                 query = """
