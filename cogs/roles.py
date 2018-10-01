@@ -146,7 +146,7 @@ class Roles:
         if event.message_id != self.msg_id:
             return
 
-        role = guild.get_roles(self.bot.reaction_manager[event.emoji.name])
+        role = guild.get_role(self.bot.reaction_manager[event.emoji.name])
         if role not in member.roles:
             return
 
