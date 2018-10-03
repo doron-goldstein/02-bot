@@ -9,24 +9,27 @@ class Spook:
         self.black = guild.get_role(roles['black'])
         self.orange = guild.get_role(roles['orange'])
 
-    @commands.command()
-    async def orange(self, ctx):
+    @commands.command(name="orange")
+    async def orange_(self, ctx):
         """Join the Orange team!"""
         if self.black in ctx.author.roles:
             return await ctx.send("You can't join both teams, Darling!")
         await ctx.author.add_roles(self.orange)
+        await ctx.send("You've joined the Orange team!")
 
-    @commands.command()
-    async def black(self, ctx):
+    @commands.command(name="black")
+    async def black_(self, ctx):
         """Join the Black team!"""
         if self.orange in ctx.author.roles:
             return await ctx.send("You can't join both teams, Darling!")
         await ctx.author.add_roles(self.black)
+        await ctx.send("You've joined the Black team!")
 
     @commands.command()
     async def unspook(self, ctx):
         """Leave the spooky team you're in"""
         await ctx.author.remove_roles(self.orange, self.black)
+        await ctx.send("You've left the spooky team!")
 
 
 def setup(bot):
