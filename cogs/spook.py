@@ -1,3 +1,5 @@
+import random
+
 from discord.ext import commands
 
 
@@ -30,6 +32,14 @@ class Spook:
         """Leave the spooky team you're in"""
         await ctx.author.remove_roles(self.orange, self.black)
         await ctx.send("You've left the spooky team!")
+
+    @commands.command()
+    async def happy(self, ctx, color):
+        color = color.lower()
+        if color not in ["orange", "black"]:
+            return await ctx.send("Darling, that's not a valid color!")
+        m = random.choice(getattr(self, color).members)
+        await ctx.send(f"Happy Halloween, {m.mention}!")
 
 
 def setup(bot):
