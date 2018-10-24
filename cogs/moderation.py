@@ -521,6 +521,7 @@ class Moderation:
 
     @command()
     async def remove(self, ctx, member: discord.Member, role: discord.Role):
+        await ctx.message.delete()
         await member.remove_roles(role)
         if self.bot.config[ctx.guild.id]['echo_mod_actions']:
             await ctx.send(f"Role `{role}` has been removed from `{member}` by `{ctx.author}`.")

@@ -39,6 +39,7 @@ class Spook:
         color = color.lower()
         if color not in ["orange", "black"]:
             return await ctx.send("Darling, that's not a valid color!")
+        await ctx.message.delete()
         m = random.choice(getattr(self, color).members)
         await ctx.send(f"Happy Halloween, {m.mention}!")
 
