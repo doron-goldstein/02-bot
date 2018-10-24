@@ -34,6 +34,7 @@ class Spook:
         await ctx.send("You've left the spooky team!")
 
     @commands.command()
+    @commands.has_permissions(kick_members=True)
     async def happy(self, ctx, color):
         color = color.lower()
         if color not in ["orange", "black"]:
