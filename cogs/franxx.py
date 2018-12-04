@@ -12,6 +12,7 @@ class FranXX:
         self.greet_channel = bot.get_channel(391483720244264961)
         self.greet_log = bot.get_channel(392444419535667200)
         self.welcome_emoji = discord.utils.get(bot.emojis, name="welcome")
+        self.snap_role = self.greet_channel.guild.get_role(437013174533881867)
 
     @cooldown(1, 120, BucketType.channel)
     @commands.command(aliases=["episode", "nextepisode", "airtime"])
@@ -45,6 +46,9 @@ class FranXX:
                 r_id = self.bot.muted_roles.get(member.guild.id)
                 await member.add_roles(member.guild.get_role(r_id))
 
+        if member.id in self.bot.snapped_members:
+            await member.add_roles(self.snap_role)
+
         if self.bot.config[member.guild.id]['do_welcome']:
             m = await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
                                               "Only those who read <#434836251766423564> can ride Strelizia with me.\n"
@@ -58,6 +62,22 @@ class FranXX:
     async def on_member_remove(self, member):
         if member.guild != self.greet_channel.guild:
             return
+
+        if self.snap_role in member.roles:
+            query = """
+                INSERT INTO snap_states (member_id) VALUES ($1)
+            """
+            await self.bot.pool.execute(query, member.id)
+            self.snapped_members.append(member.id)
+        else:
+            query = """
+                DELETE FROM snap_states WHERE member_id = $1
+            """
+            await self.bot.pool.execute(query, member.id)
+            try:
+                self.snapped_members.remove(member.id)
+            except ValueError:
+                pass
 
         if self.bot.config[member.guild.id]['do_welcome']:
             await self.greet_channel.send(f"Farewell, my Darling! `{member}` has left the server!")
