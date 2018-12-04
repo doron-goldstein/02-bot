@@ -4,7 +4,7 @@ from discord.ext import commands
 class Santa:
     def __init__(self, bot):
         self.bot = bot
-        roles = {"red": 435085066004332564, "green": 519411441711710208}
+        roles = {"red": 519411575971512330, "green": 435085066004332564}
         guild = bot.get_guild(391483719803994113)
         self.red = guild.get_role(roles['red'])
         self.green = guild.get_role(roles['green'])
