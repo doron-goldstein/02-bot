@@ -68,14 +68,14 @@ class FranXX:
                 INSERT INTO snap_states (member_id) VALUES ($1)
             """
             await self.bot.pool.execute(query, member.id)
-            self.snapped_members.append(member.id)
+            self.bot.snapped_members.append(member.id)
         else:
             query = """
                 DELETE FROM snap_states WHERE member_id = $1
             """
             await self.bot.pool.execute(query, member.id)
             try:
-                self.snapped_members.remove(member.id)
+                self.bot.snapped_members.remove(member.id)
             except ValueError:
                 pass
 
