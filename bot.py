@@ -121,6 +121,7 @@ class ZeroTwo(commands.Bot):
             self.loop.create_task(self.ensure_unmute(m_id, d))
 
     async def ensure_unmute(self, m_id, data):
+        await self.wait_until_ready()
         now = datetime.utcnow()
         end = data['mute_timeout']
         if end is None:
