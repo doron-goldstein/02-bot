@@ -135,6 +135,8 @@ class ZeroTwo(commands.Bot):
             mod = guild.me
             original_mod = guild.get_member(data['muter_id'])
             member = guild.get_member(m_id)
+            if member is None:
+                return
             cog = self.get_cog('Moderation')
             await cog._do_unmute(member, reason=reason, mod=mod, guild=guild)
             embed = discord.Embed(title="Member Auto-unmuted", timestamp=datetime.now())
