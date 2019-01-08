@@ -15,20 +15,27 @@ startup_extensions = ["fun", "moderation", "admin", "franxx", "logger", "roles",
 extensions = ["cogs." + ext for ext in startup_extensions]
 yaml = YAML()
 config = None
+dev = False
 try:
     with open("config.yaml") as f:
         config = yaml.load(f)
-        token = config["token"]
+        dev = config["dev"]
+        if dev:
+            token = config["dev_token"]
+        else:
+            token = config["token"]
         db = config["db"]
         redis = (config["redis_addr"], config["redis_pw"])
         img_auth = config["img_auth"]
-        dev = True
 except:  # noqa
-    token = os.environ.get("TOKEN")
+    dev = os.environ.get("DEV")
+    if dev:
+        token = os.environ.get("DEV_TOKEN")
+    else:
+        token = os.environ.get("TOKEN")
     db = os.environ.get("DATABASE_URL")
     redis = (os.environ.get("REDIS_ADDR"), os.environ.get("REDIS_PW"))
     img_auth = os.environ.get("WOLKE_TOKEN")
-    dev = False
 
 
 async def get_prefix(bot, msg):
