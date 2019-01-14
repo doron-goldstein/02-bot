@@ -2,6 +2,7 @@ import asyncio
 import json
 import re
 from datetime import datetime, timedelta
+from typing import Union
 
 import discord
 from discord.ext.commands import command
@@ -421,7 +422,7 @@ class Moderation:
             await ctx.send("Something went wrong! Could not purge.")
 
     @command()
-    async def check(self, ctx, target: discord.Member, action_type="overall"):
+    async def check(self, ctx, target: Union[discord.Member, int], action_type="overall"):
         """Shows the list of previous warnings a member has been given."""
 
         if action_type == "overall":
@@ -446,7 +447,8 @@ class Moderation:
             SELECT * FROM {types[action_type]}
             WHERE guild_id = $1 AND member_id = $2
         """
-        recs = await self.bot.pool.fetch(query, ctx.guild.id, target.id)
+        t_id = target if isinstance(target, int) else target.id
+        recs = await self.bot.pool.fetch(query, ctx.guild.id, t_id)
         txt = types[action_type] + " list:\n"
         for r in recs:
             mod = ctx.guild.get_member(r['moderator_id'])
@@ -484,7 +486,8 @@ class Moderation:
                 WHERE member_id = $1
             ) AS warning_count
         """
-        rec = await self.bot.pool.fetchrow(query, target.id)
+        t_id = target if isinstance(target, int) else target.id
+        rec = await self.bot.pool.fetchrow(query, t_id)
         mutes = rec['mute_count']
         bans = rec['ban_count']
         kicks = rec['kick_count']
@@ -496,7 +499,9 @@ class Moderation:
             .add_field(name="Total Mutes", value=mutes, inline=False) \
             .add_field(name="Total Kicks", value=kicks, inline=False) \
             .add_field(name="Total Bans", value=bans, inline=False) \
-            .set_author(name=f"{target} / {target.id}", icon_url=target.avatar_url)
+            .set_author(name=f"{target} / {t_id}")
+        if not isinstance(target, int):
+            embed.author.icon_url = target.avatar_url
         await ctx.send(embed=embed)
 
     @command()
