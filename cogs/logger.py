@@ -31,6 +31,8 @@ class Logger:
     async def on_message_delete(self, message):
         if message.author.bot:  # ignore bots
             return
+        if message.channel.id == 542389702792183828:  # story_time
+            return
         ctx = await self.bot.get_context(message)
         if ctx.command:  # ignore commands
             return
