@@ -12,7 +12,6 @@ class FranXX:
         self.greet_channel = bot.get_channel(391483720244264961)
         self.greet_log = bot.get_channel(392444419535667200)
         self.welcome_emoji = discord.utils.get(bot.emojis, name="welcome")
-        self.snap_role = self.greet_channel.guild.get_role(437013174533881867)
 
     @cooldown(1, 120, BucketType.channel)
     @commands.command(aliases=["episode", "nextepisode", "airtime"])
@@ -40,14 +39,13 @@ class FranXX:
         if member.guild != self.greet_channel.guild:
             return
 
-        state = self.bot.muted_members.get(member.id)
-        if state:
-            if state.get('muted'):
-                r_id = self.bot.muted_roles.get(member.guild.id)
-                await member.add_roles(member.guild.get_role(r_id))
-
-        if member.id in self.bot.snapped_members:
-            await member.add_roles(self.snap_role)
+        state = self.bot.role_states.get(member.id)
+        if state is not None:
+            roles = []
+            for role_id in state:
+                if not role_id == member.guild.default_role.id:
+                    roles.append(member.guild.get_role(role_id))
+            await member.add_roles(*roles)
 
         if self.bot.config[member.guild.id]['do_welcome']:
             m = await self.greet_channel.send(f"Welcome {member.mention}, my Darling! "
@@ -63,21 +61,14 @@ class FranXX:
         if member.guild != self.greet_channel.guild:
             return
 
-        if self.snap_role in member.roles:
-            query = """
-                INSERT INTO snap_states (member_id) VALUES ($1)
-            """
-            await self.bot.pool.execute(query, member.id)
-            self.bot.snapped_members.append(member.id)
-        else:
-            query = """
-                DELETE FROM snap_states WHERE member_id = $1
-            """
-            await self.bot.pool.execute(query, member.id)
-            try:
-                self.bot.snapped_members.remove(member.id)
-            except ValueError:
-                pass
+        query = """
+            INSERT INTO role_states (member_id, roles) VALUES ($1, $2)
+            ON CONFLICT (member_id) DO UPDATE
+                SET roles = $2
+        """
+        roles = [r.id for r in member.roles]
+        await self.bot.pool.execute(query, member.id, roles)
+        self.bot.role_states[member.id] = roles
 
         if self.bot.config[member.guild.id]['do_welcome']:
             await self.greet_channel.send(f"Farewell, my Darling! `{member}` has left the server!")
