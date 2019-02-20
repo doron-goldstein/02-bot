@@ -158,7 +158,7 @@ class ZeroTwo(commands.Bot):
 
     async def make_haste(self, text, *, raw=False):
         url = "https://hastebin.com/"
-        resp = await self.session.post("https://hastebin.com/documents", data=text)
+        resp = await self.session.post(url + "documents", data=text)
         data = await resp.json()
         if raw:
             return url + "raw/" + data['key']
