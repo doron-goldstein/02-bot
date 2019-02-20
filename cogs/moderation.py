@@ -335,6 +335,8 @@ class Moderation:
         if r_id:
             role = guild.get_role(r_id)
             if role:
+                if role not in target.roles:
+                    return
                 await target.remove_roles(role)
                 query = """
                     UPDATE mute_states
